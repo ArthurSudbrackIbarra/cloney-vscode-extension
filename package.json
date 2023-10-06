@@ -1,0 +1,71 @@
+{
+  "name": "cloney",
+  "displayName": "Cloney",
+  "description": "Support for the Cloney tool.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "categories": [
+    "Snippets"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:cloney"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "cloney",
+        "aliases": [
+          "Cloney"
+        ],
+        "filenames": [
+          ".cloney.yaml",
+          ".cloney-vars.yaml"
+        ],
+        "icon": {
+          "light": "./images/cloney-logo-no-text-rounded.png",
+          "dark": "./images/cloney-logo-no-text-rounded.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cloney",
+        "scopeName": "source.yaml.cloney",
+        "path": "./syntaxes/cloney-syntax.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "cloney",
+        "path": "./snippets/cloney-snippets.json"
+      }
+    ]
+  },
+  "capabilities": {
+    "hoverProvider": true
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.6",
+    "@types/mocha": "^10.0.2",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.83.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "@vscode/test-electron": "^2.3.4",
+    "eslint": "^8.50.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  }
+}

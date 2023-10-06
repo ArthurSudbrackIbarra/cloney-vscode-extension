@@ -1,0 +1,41 @@
+{
+  "Cloney Metadata File Boilerplate": {
+    "scope": "source.yaml.cloney",
+    "prefix": "cloney",
+    "body": [
+      "manifest_version: v1",
+      "",
+      "name: ${1:name}",
+      "description: ${2:description}",
+      "authors:",
+      "  - ${3:author}",
+      "license: MIT",
+      "template_version: \"0.1.0\"",
+      "",
+      "variables:",
+      "  "
+    ],
+    "description": "Create the boilerplate for a Cloney metadata file."
+  },
+  "Cloney Configuration Block": {
+    "scope": "source.yaml.cloney",
+    "prefix": "configuration",
+    "body": [
+      "configuration:",
+      "  ignore_paths:",
+      "    - ${1:path}"
+    ],
+    "description": "Create a Cloney configuration block."
+  },
+  "Cloney Variable": {
+    "scope": "source.yaml.cloney",
+    "prefix": "variable",
+    "body": [
+      "- name: ${1:name}",
+      "  description: ${2:description}",
+      "  default: ${3:default}",
+      "  example: ${4:example}"
+    ],
+    "description": "Create a Cloney variable."
+  }
+}
