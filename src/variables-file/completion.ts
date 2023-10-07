@@ -57,7 +57,6 @@ export class CloneyVariablesCompletionProvider
     // Check if the repository has already been cloned.
     // If not, clone it.
     const tempDir = `${tmpdir()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}`;
-    console.log(tempDir);
     if (!existsSync(tempDir)) {
       const git = simpleGit();
       try {
