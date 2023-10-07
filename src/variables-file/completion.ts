@@ -14,9 +14,18 @@ export class CloneyVariablesCompletionProvider
     token: vscode.CancellationToken,
     context: vscode.CompletionContext
   ): Promise<vscode.CompletionItem[]> {
+    // First check if the user has specified a remote Cloney repository,
+    // using the # Repository: https://... annotation.
+    const remoteRepositoryCompletionItems =
+      await this.completionItemsFromRemoteRepository(document);
+    if (remoteRepositoryCompletionItems.length > 0) {
+      return remoteRepositoryCompletionItems;
+    }
+
+    // If the user has not specified a remote Cloney repository,
+    // check if the user has a local Cloney metadata file.
     try {
       // Read the Cloney metadata file and find every variable defined in it.
-      // In case of error, try to fetch the variables from a remote repository.
       const content = await readUserFile(".cloney.yaml");
       if (!content) {
         return this.completionItemsFromRemoteRepository(document);
@@ -24,8 +33,8 @@ export class CloneyVariablesCompletionProvider
 
       return this.completionItemsFromYAML(content);
     } catch (error) {
-      // In case of any error, fall back to fetching variables from a remote repository.
-      return this.completionItemsFromRemoteRepository(document);
+      // In case of any error, return an empty array.
+      return [];
     }
   }
 
@@ -75,10 +84,13 @@ export class CloneyVariablesCompletionProvider
       return [];
     }
 
-    return this.completionItemsFromYAML(content);
+    return this.completionItemsFromYAML(content, true);
   }
 
-  private completionItemsFromYAML(content: string): vscode.CompletionItem[] {
+  private completionItemsFromYAML(
+    content: string,
+    isRemote?: boolean
+  ): vscode.CompletionItem[] {
     // Parse the YAML content
     const parsedYAML = yaml.load(content) as any;
     if (!parsedYAML || !parsedYAML.variables) {
@@ -97,17 +109,26 @@ export class CloneyVariablesCompletionProvider
       // Create a completion item for the variable
       const variableItem = new vscode.CompletionItem(
         variableName,
-        vscode.CompletionItemKind.Variable
+        vscode.CompletionItemKind.Property
       );
 
       // Set details.
-      variableItem.detail = variableName;
+      let detail = variableName;
+      if ("default" in variable) {
+        detail += " (Optional)";
+      } else {
+        detail += " (Required)";
+      }
+      if (isRemote) {
+        detail += " (From Remote Repository)";
+      } else {
+        detail += " (From Local File)";
+      }
+      variableItem.detail = detail;
 
       // Set documentation.
       variableItem.documentation = new vscode.MarkdownString(
-        "default" in variable
-          ? variableDescription
-          : `(Required) ${variableDescription}`
+        variableDescription
       );
 
       // Convert default and example fields back to YAML, in order to show them as code blocks
@@ -125,18 +146,27 @@ export class CloneyVariablesCompletionProvider
       }
 
       // Set insert text (the text inserted when the completion item is accepted)
-      if (exampleYAML.split("\n").length < 3) {
-        variableItem.insertText = new vscode.SnippetString(
-          `${variableName}: \${1:${exampleYAML.replace("\n", "")}}`
-        );
+      let snippetStr = "";
+      if ("default" in variable) {
+        snippetStr += "# (Optional)";
       } else {
-        variableItem.insertText = new vscode.SnippetString(
-          `${variableName}:\n  \${1:${exampleYAML
-            .split("\n")
-            .join("\n  ")
-            .trim()}}`
-        );
+        snippetStr += "# (Required)";
       }
+      if (variableDescription) {
+        snippetStr += ` ${variableDescription}`;
+      }
+      if (exampleYAML.split("\n").length < 3) {
+        snippetStr += `\n${variableName}: \${1:${exampleYAML.replace(
+          "\n",
+          ""
+        )}}`;
+      } else {
+        snippetStr += `\n${variableName}:\n  \${1:${exampleYAML
+          .split("\n")
+          .join("\n  ")
+          .trim()}}`;
+      }
+      variableItem.insertText = new vscode.SnippetString(snippetStr);
 
       completionItems.push(variableItem);
     }

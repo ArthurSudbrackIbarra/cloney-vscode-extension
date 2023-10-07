@@ -9,9 +9,16 @@ const os_1 = require("os");
 const fs_1 = require("fs");
 class CloneyVariablesCompletionProvider {
     async provideCompletionItems(document, position, token, context) {
+        // First check if the user has specified a remote Cloney repository,
+        // using the # Repository: https://... annotation.
+        const remoteRepositoryCompletionItems = await this.completionItemsFromRemoteRepository(document);
+        if (remoteRepositoryCompletionItems.length > 0) {
+            return remoteRepositoryCompletionItems;
+        }
+        // If the user has not specified a remote Cloney repository,
+        // check if the user has a local Cloney metadata file.
         try {
             // Read the Cloney metadata file and find every variable defined in it.
-            // In case of error, try to fetch the variables from a remote repository.
             const content = await (0, vscode_1.readUserFile)(".cloney.yaml");
             if (!content) {
                 return this.completionItemsFromRemoteRepository(document);
@@ -19,8 +26,8 @@ class CloneyVariablesCompletionProvider {
             return this.completionItemsFromYAML(content);
         }
         catch (error) {
-            // In case of any error, fall back to fetching variables from a remote repository.
-            return this.completionItemsFromRemoteRepository(document);
+            // In case of any error, return an empty array.
+            return [];
         }
     }
     async completionItemsFromRemoteRepository(document) {
@@ -62,9 +69,9 @@ class CloneyVariablesCompletionProvider {
         catch (error) {
             return [];
         }
-        return this.completionItemsFromYAML(content);
+        return this.completionItemsFromYAML(content, true);
     }
-    completionItemsFromYAML(content) {
+    completionItemsFromYAML(content, isRemote) {
         // Parse the YAML content
         const parsedYAML = yaml.load(content);
         if (!parsedYAML || !parsedYAML.variables) {
@@ -78,13 +85,24 @@ class CloneyVariablesCompletionProvider {
             const variableName = variable.name;
             const variableDescription = variable.description;
             // Create a completion item for the variable
-            const variableItem = new vscode.CompletionItem(variableName, vscode.CompletionItemKind.Variable);
+            const variableItem = new vscode.CompletionItem(variableName, vscode.CompletionItemKind.Property);
             // Set details.
-            variableItem.detail = variableName;
+            let detail = variableName;
+            if ("default" in variable) {
+                detail += " (Optional)";
+            }
+            else {
+                detail += " (Required)";
+            }
+            if (isRemote) {
+                detail += " (From Remote Repository)";
+            }
+            else {
+                detail += " (From Local File)";
+            }
+            variableItem.detail = detail;
             // Set documentation.
-            variableItem.documentation = new vscode.MarkdownString("default" in variable
-                ? variableDescription
-                : `(Required) ${variableDescription}`);
+            variableItem.documentation = new vscode.MarkdownString(variableDescription);
             // Convert default and example fields back to YAML, in order to show them as code blocks
             const defaultYAML = yaml.dump(variable.default);
             if ("default" in variable) {
@@ -95,15 +113,26 @@ class CloneyVariablesCompletionProvider {
                 variableItem.documentation.appendMarkdown(`\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``);
             }
             // Set insert text (the text inserted when the completion item is accepted)
-            if (exampleYAML.split("\n").length < 3) {
-                variableItem.insertText = new vscode.SnippetString(`${variableName}: \${1:${exampleYAML.replace("\n", "")}}`);
+            let snippetStr = "";
+            if ("default" in variable) {
+                snippetStr += "# (Optional)";
             }
             else {
-                variableItem.insertText = new vscode.SnippetString(`${variableName}:\n  \${1:${exampleYAML
+                snippetStr += "# (Required)";
+            }
+            if (variableDescription) {
+                snippetStr += ` ${variableDescription}`;
+            }
+            if (exampleYAML.split("\n").length < 3) {
+                snippetStr += `\n${variableName}: \${1:${exampleYAML.replace("\n", "")}}`;
+            }
+            else {
+                snippetStr += `\n${variableName}:\n  \${1:${exampleYAML
                     .split("\n")
                     .join("\n  ")
-                    .trim()}}`);
+                    .trim()}}`;
             }
+            variableItem.insertText = new vscode.SnippetString(snippetStr);
             completionItems.push(variableItem);
         }
         return completionItems;

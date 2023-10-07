@@ -1,167 +1,112 @@
 import * as vscode from "vscode";
 
-// Manifest Version.
-const manifestVersionItem = new vscode.CompletionItem(
-  "manifest_version",
-  vscode.CompletionItemKind.Property
-);
-manifestVersionItem.detail = "Manifest Version";
-manifestVersionItem.documentation = new vscode.MarkdownString(
-  `(Required) The version of this Cloney manifest file, ensuring compatibility with different versions of Cloney.
+// Common function to create a completion item for a field with comments.
+function createFieldCompletionItem(
+  fieldName: string,
+  fieldDescription: string,
+  isRequired: boolean,
+  snippet: string
+): vscode.CompletionItem {
+  const fieldItem = new vscode.CompletionItem(
+    fieldName,
+    vscode.CompletionItemKind.Property
+  );
+  fieldItem.detail = `${fieldName}${
+    isRequired ? " (Required)" : " (Optional)"
+  }`;
+  fieldItem.documentation = new vscode.MarkdownString(
+    `**${isRequired ? "Required" : "Optional"}** ${fieldDescription}`
+  );
+  fieldItem.insertText = new vscode.SnippetString(snippet);
+  return fieldItem;
+}
 
-Allowed values are: \`v1\`.`
-);
-manifestVersionItem.insertText = new vscode.SnippetString(
-  "manifest_version: ${1:v1}"
+// Manifest Version.
+const manifestVersionItem = createFieldCompletionItem(
+  "manifest_version",
+  "The version of this Cloney manifest file, ensuring compatibility with different versions of Cloney.",
+  true,
+  "# (Required) The version of this Cloney manifest file, ensuring compatibility with different versions of Cloney.\nmanifest_version: ${1:v1}"
 );
 
 // Name.
-const nameItem = new vscode.CompletionItem(
-  "name",
-  vscode.CompletionItemKind.Property
+const nameItem = createFieldCompletionItem(
+  "template_name",
+  "The name of your Cloney template, providing a clear identifier for users.",
+  true,
+  "# (Required) The name of your Cloney template, providing a clear identifier for users.\nname: ${1:Template Name}"
 );
-nameItem.detail = "Name";
-nameItem.documentation = new vscode.MarkdownString(
-  `(Required) The name of your Cloney template or of a variable, providing a clear identifier for users.
-  
-\`\`\`yaml
-name: My Template # Template name.
-variables:
-    - name: var_name # Variable name.
-\`\`\``
-);
-nameItem.insertText = new vscode.SnippetString("name: ${1:name}");
 
 // Description.
-const descriptionItem = new vscode.CompletionItem(
-  "description",
-  vscode.CompletionItemKind.Property
-);
-descriptionItem.detail = "Description";
-descriptionItem.documentation = new vscode.MarkdownString(
-  `(Optional) A brief but informative description of your Cloney template or of a variable.
-  
-\`\`\`yaml
-description: My description. # Template description.
-variables:
-    - description: var_description # Variable description.
-\`\`\``
-);
-descriptionItem.insertText = new vscode.SnippetString(
-  "description: ${1:description}"
+const descriptionItem = createFieldCompletionItem(
+  "template_description",
+  "A brief but informative description of your Cloney template.",
+  false,
+  "# (Optional) A brief but informative description of your Cloney template.\ndescription: ${1:Template Description}"
 );
 
 // Template Version.
-const templateVersionItem = new vscode.CompletionItem(
+const templateVersionItem = createFieldCompletionItem(
   "template_version",
-  vscode.CompletionItemKind.Property
-);
-templateVersionItem.detail = "Template Version";
-templateVersionItem.documentation = new vscode.MarkdownString(
-  `(Required) The version number of your template. Update it as you make new changes to your template.`
-);
-templateVersionItem.insertText = new vscode.SnippetString(
-  "template_version: ${1:1.0.0}"
+  "The version number of your template. Update it as you make new changes to your template.",
+  true,
+  '# (Optional) The version number of your template. Update it as you make new changes to your template.\ntemplate_version: ${1:"0.1.0"}'
 );
 
 // Authors.
-const authorsItem = new vscode.CompletionItem(
+const authorsItem = createFieldCompletionItem(
   "authors",
-  vscode.CompletionItemKind.Property
-);
-authorsItem.detail = "Authors";
-authorsItem.documentation = new vscode.MarkdownString(
-  `(Optional) A list of contributors or creators of the template, acknowledging their role in its development.`
-);
-authorsItem.insertText = new vscode.SnippetString(
-  "authors:\n  - ${1:John Doe}"
+  "A list of contributors or creators of the template, acknowledging their role in its development.",
+  false,
+  "# (Optional) A list of contributors or creators of the template, acknowledging their role in its development.\nauthors:\n  - ${1:Your name}"
 );
 
 // Configuration.
-const configurationItem = new vscode.CompletionItem(
+const configurationItem = createFieldCompletionItem(
   "configuration",
-  vscode.CompletionItemKind.Property
+  "A list of configuration options for your template, allowing users to customize their experience.",
+  false,
+  "# (Optional) A list of configuration options for your template, allowing users to customize their experience.\nconfiguration:\n  "
 );
-configurationItem.detail = "Configuration";
-configurationItem.documentation = new vscode.MarkdownString(
-  `(Optional) A list of configuration options for your template, allowing users to customize their experience.
-  
-\`\`\`yaml
-# Example:
-configuration:
-    ignore_paths:
-        - images/*.png
-    # Other configuration options...
-\`\`\``
-);
-configurationItem.insertText = new vscode.SnippetString("configuration:\n  ");
 
 // Ignore Paths.
-const ignorePathsItem = new vscode.CompletionItem(
+const ignorePathsItem = createFieldCompletionItem(
   "ignore_paths",
-  vscode.CompletionItemKind.Property
-);
-ignorePathsItem.detail = "Ignore Paths";
-ignorePathsItem.documentation = new vscode.MarkdownString(
-  `(Optinal) A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process.
-  
-\`\`\`yaml
-# Example:
-configuration:
-    ignore_paths:
-        - images/*.png
-\`\`\``
-);
-ignorePathsItem.insertText = new vscode.SnippetString(
-  "ignore_paths:\n  - ${1:path_to_ignore}"
+  "A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process.",
+  false,
+  "ignore_paths:\n  - ${1:path_to_ignore} # (Optional) A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process."
 );
 
 // Variables.
-const variablesItem = new vscode.CompletionItem(
+const variablesItem = createFieldCompletionItem(
   "variables",
-  vscode.CompletionItemKind.Property
+  "A list of variables that users can customize during the cloning process.",
+  false,
+  "# (Optional) A list of variables that users can customize during the cloning process.\nvariables:\n  - name: ${1:variable_name}\n    description: ${2:variable_description}\n    default: ${3:variable_default_value}\n    example: ${4:variable_example_value}"
 );
-variablesItem.detail = "Variables";
-variablesItem.documentation = new vscode.MarkdownString(
-  `(Optional) A list of variables that users can customize during the cloning process.
-  
-\`\`\`yaml
-# Example:
-variables:
-    - name: var_name
-      description: var_description
-      default: default_value
-      example: example_value
-\`\`\``
-);
-variablesItem.insertText = new vscode.SnippetString(
-  "variables:\n  - name: ${1:var_name}\n    description: ${2:var_description}\n    default: ${3:default_value}\n    example: ${4:example_value}"
+
+// Variable description.
+const variableDescriptionItem = createFieldCompletionItem(
+  "variable_description",
+  "A description of the variable, providing context for users.",
+  false,
+  "description: ${1:variable_description} # A description of the variable, providing context for users."
 );
 
 // Variable Default.
-const variableDefaultItem = new vscode.CompletionItem(
-  "default",
-  vscode.CompletionItemKind.Property
-);
-variableDefaultItem.detail = "Variable Default";
-variableDefaultItem.documentation = new vscode.MarkdownString(
-  `(Optional) The default value of a variable.`
-);
-variableDefaultItem.insertText = new vscode.SnippetString(
-  "default: ${1:default_value}"
+const variableDefaultItem = createFieldCompletionItem(
+  "variable_default_value",
+  "The default value of a variable.",
+  false,
+  "default: ${1:variable_default_value} # (Optional) The default value of the variable."
 );
 
 // Variable Example.
-const variableExampleItem = new vscode.CompletionItem(
-  "example",
-  vscode.CompletionItemKind.Property
-);
-variableExampleItem.detail = "Variable Example";
-variableExampleItem.documentation = new vscode.MarkdownString(
-  `(Required) An example value of the variable.`
-);
-variableExampleItem.insertText = new vscode.SnippetString(
-  "example: ${1:example_value}"
+const variableExampleItem = createFieldCompletionItem(
+  "variable_example_value",
+  "An example value of the variable.",
+  true,
+  "example: ${1:variable_example_value} # (Required) An example value of the variable."
 );
 
 // Export fields.
@@ -174,6 +119,7 @@ export const metadataFileCompletionItems = [
   configurationItem,
   ignorePathsItem,
   variablesItem,
+  variableDescriptionItem,
   variableDefaultItem,
   variableExampleItem,
 ];
