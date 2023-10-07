@@ -11,17 +11,30 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
-    "onLanguage:cloney"
+    "onLanguage:cloney-metadata-file",
+    "onLanguage:cloney-variables-file"
   ],
   "contributes": {
     "languages": [
       {
-        "id": "cloney",
+        "id": "cloney-metadata-file",
         "aliases": [
-          "Cloney"
+          "Cloney Metadata File"
         ],
         "filenames": [
-          ".cloney.yaml",
+          ".cloney.yaml"
+        ],
+        "icon": {
+          "light": "./images/cloney-logo-no-text-rounded.png",
+          "dark": "./images/cloney-logo-no-text-rounded.png"
+        }
+      },
+      {
+        "id": "cloney-variables-file",
+        "aliases": [
+          "Cloney Variables File"
+        ],
+        "filenames": [
           ".cloney-vars.yaml"
         ],
         "icon": {
@@ -32,20 +45,22 @@
     ],
     "grammars": [
       {
-        "language": "cloney",
-        "scopeName": "source.yaml.cloney",
-        "path": "./syntaxes/cloney-syntax.json"
+        "language": "cloney-metadata-file",
+        "scopeName": "source.yaml.cloney-metadata-file",
+        "path": "./syntaxes/cloney-metadata-file-syntax.json"
+      },
+      {
+        "language": "cloney-variables-file",
+        "scopeName": "source.yaml.cloney-variables-file",
+        "path": "./syntaxes/cloney-variables-file-syntax.json"
       }
     ],
     "snippets": [
       {
-        "language": "cloney",
-        "path": "./snippets/cloney-snippets.json"
+        "language": "cloney-metadata-file",
+        "path": "./snippets/cloney-metadata-file-snippets.json"
       }
     ]
-  },
-  "capabilities": {
-    "hoverProvider": true
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
