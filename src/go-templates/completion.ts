@@ -91,7 +91,7 @@ export class CloneyGoTemplatesCompletionProvider
         `{{ .${variableName} }}`,
         vscode.CompletionItemKind.Variable
       );
-      variableItemWithBraces.detail = detail;
+      variableItemWithBraces.detail = detail + " (With Braces)";
       variableItemWithBraces.documentation = variableItem.documentation;
       variableItemWithBraces.insertText = new vscode.SnippetString(
         `{{ .${variableName} }}`

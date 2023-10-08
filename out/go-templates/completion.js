@@ -65,7 +65,7 @@ class CloneyGoTemplatesCompletionProvider {
             completionItems.push(variableItem);
             // Create a completion item for the variable but including '{{' and '}}'.
             const variableItemWithBraces = new vscode.CompletionItem(`{{ .${variableName} }}`, vscode.CompletionItemKind.Variable);
-            variableItemWithBraces.detail = detail;
+            variableItemWithBraces.detail = detail + " (With Braces)";
             variableItemWithBraces.documentation = variableItem.documentation;
             variableItemWithBraces.insertText = new vscode.SnippetString(`{{ .${variableName} }}`);
             completionItems.push(variableItemWithBraces);
