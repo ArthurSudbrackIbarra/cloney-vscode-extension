@@ -8,10 +8,13 @@ const constants_1 = require("./constants");
 function isCloneyInstalled() {
     const command = "cloney version";
     try {
+        // Try to execute the 'cloney version' command.
+        // If it succeeds, Cloney is installed.
         (0, child_process_1.execSync)(command);
         return true;
     }
     catch (error) {
+        // If the command fails, Cloney is not installed.
         return false;
     }
 }

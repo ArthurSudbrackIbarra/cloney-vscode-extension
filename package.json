@@ -21,6 +21,7 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:cloney-metadata-file",
     "onLanguage:cloney-variables-file"
   ],

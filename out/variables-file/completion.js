@@ -8,6 +8,7 @@ const simple_git_1 = require("simple-git");
 const os_1 = require("os");
 const fs_1 = require("fs");
 const constants_1 = require("../constants");
+// Defines a completion provider for Cloney Variables.
 class CloneyVariablesCompletionProvider {
     async provideCompletionItems(document, position, token, context) {
         // First check if the user has specified a remote Cloney repository,

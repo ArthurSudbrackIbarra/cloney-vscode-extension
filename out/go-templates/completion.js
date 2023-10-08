@@ -5,12 +5,15 @@ const vscode = require("vscode");
 const yaml = require("js-yaml");
 const vscode_1 = require("../vscode");
 const constants_1 = require("../constants");
+const items_1 = require("./items");
+// Defines a completion provider for Cloney Go Templates.
 class CloneyGoTemplatesCompletionProvider {
+    // Provides completion items for the Cloney Go Templates.
     async provideCompletionItems(document, position, token, context) {
-        // Check if there is a Cloney metadata file in the user's workspace.
-        // If there is, return the completion items from it.
-        // If there isn't, return an empty array.
         try {
+            // Check if there is a Cloney metadata file in the user's workspace.
+            // If there is, return the completion items from it.
+            // If there isn't, return an empty array.
             const content = await (0, vscode_1.readUserFile)(constants_1.CLONEY_METADATA_FILE_NAME);
             if (!content) {
                 return [];
@@ -21,6 +24,7 @@ class CloneyGoTemplatesCompletionProvider {
             return [];
         }
     }
+    // Extracts completion items from parsed YAML content.
     completionItemsFromYAML(content) {
         // Parse the YAML content.
         const parsedYAML = yaml.load(content);
@@ -37,7 +41,7 @@ class CloneyGoTemplatesCompletionProvider {
             // Create a completion item for the variable.
             const variableItem = new vscode.CompletionItem(`.${variableName}`, vscode.CompletionItemKind.Variable);
             // Set details.
-            let detail = `Cloney Variable '${variableName}'`;
+            let detail = `Cloney - Variable '${variableName}'`;
             if ("default" in variable) {
                 detail += " (Optional)";
             }
@@ -60,14 +64,17 @@ class CloneyGoTemplatesCompletionProvider {
             variableItem.insertText = new vscode.SnippetString(`.${variableName}`);
             completionItems.push(variableItem);
             // Create a completion item for the variable but including '{{' and '}}'.
-            const variableItemWithBraces = new vscode.CompletionItem(`{{.${variableName}}}`, vscode.CompletionItemKind.Variable);
+            const variableItemWithBraces = new vscode.CompletionItem(`{{ .${variableName} }}`, vscode.CompletionItemKind.Variable);
             variableItemWithBraces.detail = detail;
             variableItemWithBraces.documentation = variableItem.documentation;
             variableItemWithBraces.insertText = new vscode.SnippetString(`{{ .${variableName} }}`);
             completionItems.push(variableItemWithBraces);
         }
+        // Merge the completion items with the go-template completion items.
+        completionItems.push(...items_1.goTemplateCompletionItems);
         return completionItems;
     }
+    // Optionally resolves additional information for a selected completion item.
     resolveCompletionItem(item, token) {
         // Optionally, you can implement additional logic to resolve completion items
         // This method is called when a user selects a completion item from the list

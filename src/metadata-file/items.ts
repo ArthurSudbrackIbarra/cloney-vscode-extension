@@ -11,7 +11,7 @@ function createFieldCompletionItem(
     fieldName,
     vscode.CompletionItemKind.Property
   );
-  fieldItem.detail = `${fieldName}${
+  fieldItem.detail = `Cloney - ${fieldName}${
     isRequired ? " (Required)" : " (Optional)"
   }`;
   fieldItem.documentation = new vscode.MarkdownString(

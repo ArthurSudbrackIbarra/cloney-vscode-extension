@@ -6,9 +6,12 @@ import { CLONEY_VARIABLES_FILE_NAME } from "./constants";
 export function isCloneyInstalled(): boolean {
   const command = "cloney version";
   try {
+    // Try to execute the 'cloney version' command.
+    // If it succeeds, Cloney is installed.
     execSync(command);
     return true;
   } catch (error) {
+    // If the command fails, Cloney is not installed.
     return false;
   }
 }

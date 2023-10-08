@@ -1,9 +1,11 @@
 import * as vscode from "vscode";
 import { metadataFileCompletionItems } from "./items";
 
+// Defines a completion provider for Cloney Metadata files.
 export class CloneyMetadataCompletionProvider
   implements vscode.CompletionItemProvider
 {
+  // Provides completion items for Cloney Metadata files.
   provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
@@ -12,9 +14,11 @@ export class CloneyMetadataCompletionProvider
   ): vscode.ProviderResult<
     vscode.CompletionItem[] | vscode.CompletionList<vscode.CompletionItem>
   > {
+    // Return the completion items defined in the metadata file.
     return metadataFileCompletionItems;
   }
 
+  // Optionally resolves additional information for a selected completion item.
   resolveCompletionItem?(
     item: vscode.CompletionItem,
     token: vscode.CancellationToken

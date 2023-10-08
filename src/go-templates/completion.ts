@@ -2,20 +2,23 @@ import * as vscode from "vscode";
 import * as yaml from "js-yaml";
 import { readUserFile } from "../vscode";
 import { CLONEY_METADATA_FILE_NAME } from "../constants";
+import { goTemplateCompletionItems } from "./items";
 
+// Defines a completion provider for Cloney Go Templates.
 export class CloneyGoTemplatesCompletionProvider
   implements vscode.CompletionItemProvider
 {
+  // Provides completion items for the Cloney Go Templates.
   async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
     token: vscode.CancellationToken,
     context: vscode.CompletionContext
   ): Promise<vscode.CompletionItem[]> {
-    // Check if there is a Cloney metadata file in the user's workspace.
-    // If there is, return the completion items from it.
-    // If there isn't, return an empty array.
     try {
+      // Check if there is a Cloney metadata file in the user's workspace.
+      // If there is, return the completion items from it.
+      // If there isn't, return an empty array.
       const content = await readUserFile(CLONEY_METADATA_FILE_NAME);
       if (!content) {
         return [];
@@ -26,6 +29,7 @@ export class CloneyGoTemplatesCompletionProvider
     }
   }
 
+  // Extracts completion items from parsed YAML content.
   private completionItemsFromYAML(content: string): vscode.CompletionItem[] {
     // Parse the YAML content.
     const parsedYAML = yaml.load(content) as any;
@@ -50,7 +54,7 @@ export class CloneyGoTemplatesCompletionProvider
       );
 
       // Set details.
-      let detail = `Cloney Variable '${variableName}'`;
+      let detail = `Cloney - Variable '${variableName}'`;
       if ("default" in variable) {
         detail += " (Optional)";
       } else {
@@ -84,7 +88,7 @@ export class CloneyGoTemplatesCompletionProvider
 
       // Create a completion item for the variable but including '{{' and '}}'.
       const variableItemWithBraces = new vscode.CompletionItem(
-        `{{.${variableName}}}`,
+        `{{ .${variableName} }}`,
         vscode.CompletionItemKind.Variable
       );
       variableItemWithBraces.detail = detail;
@@ -96,9 +100,13 @@ export class CloneyGoTemplatesCompletionProvider
       completionItems.push(variableItemWithBraces);
     }
 
+    // Merge the completion items with the go-template completion items.
+    completionItems.push(...goTemplateCompletionItems);
+
     return completionItems;
   }
 
+  // Optionally resolves additional information for a selected completion item.
   resolveCompletionItem?(
     item: vscode.CompletionItem,
     token: vscode.CancellationToken

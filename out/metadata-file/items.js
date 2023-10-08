@@ -5,7 +5,7 @@ const vscode = require("vscode");
 // Common function to create a completion item for a field with comments.
 function createFieldCompletionItem(fieldName, fieldDescription, isRequired, snippet) {
     const fieldItem = new vscode.CompletionItem(fieldName, vscode.CompletionItemKind.Property);
-    fieldItem.detail = `${fieldName}${isRequired ? " (Required)" : " (Optional)"}`;
+    fieldItem.detail = `Cloney - ${fieldName}${isRequired ? " (Required)" : " (Optional)"}`;
     fieldItem.documentation = new vscode.MarkdownString(`**${isRequired ? "Required" : "Optional"}** ${fieldDescription}`);
     fieldItem.insertText = new vscode.SnippetString(snippet);
     return fieldItem;

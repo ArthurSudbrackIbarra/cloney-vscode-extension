@@ -6,6 +6,7 @@ import { tmpdir } from "os";
 import { existsSync, readFileSync } from "fs";
 import { CLONEY_METADATA_FILE_NAME } from "../constants";
 
+// Defines a completion provider for Cloney Variables.
 export class CloneyVariablesCompletionProvider
   implements vscode.CompletionItemProvider
 {
