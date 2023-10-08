@@ -7,7 +7,7 @@ const defineItem = new vscode.CompletionItem(
 );
 defineItem.detail = "Cloney - 'define' Block";
 defineItem.documentation = new vscode.MarkdownString(
-  "The '{{ define }}' block is used to create a named template. " +
+  "The **{{ define }}** block is used to create a named template. " +
     "It allows you to define a reusable template with a specific identifier. " +
     "Later in your template, you can include or invoke this named template " +
     "using the '{{ template }}' block or the '{{ include }}' function. This " +
@@ -25,7 +25,7 @@ const templateItem = new vscode.CompletionItem(
 );
 templateItem.detail = "Cloney - 'template' Block";
 templateItem.documentation = new vscode.MarkdownString(
-  "The '{{ template }}' block is used to include a named template within " +
+  "The **{{ template }}** block is used to include a named template within " +
     "your template. It takes the name of the template as the first argument " +
     "and an optional data argument to pass data to the template. This function " +
     "enables you to reuse templates and pass data for dynamic rendering."
@@ -41,7 +41,7 @@ const includeItem = new vscode.CompletionItem(
 );
 includeItem.detail = "Cloney - 'include' Function";
 includeItem.documentation = new vscode.MarkdownString(
-  "The '{{ include }}' function allows you to import and execute another " +
+  "The **include** function allows you to import and execute another " +
     "template, passing the results to other template functions for further processing."
 );
 includeItem.insertText = new vscode.SnippetString(
@@ -55,7 +55,7 @@ const ifItem = new vscode.CompletionItem(
 );
 ifItem.detail = "Cloney - 'if' Block";
 ifItem.documentation = new vscode.MarkdownString(
-  "The '{{ if }}' block is used to conditionally render a block of content. " +
+  "The **{{ if }}** block is used to conditionally render a block of content. " +
     "It evaluates a specified condition, and if true, it renders the enclosed " +
     "content. If false, the content is not rendered."
 );
@@ -70,7 +70,7 @@ const ifElseItem = new vscode.CompletionItem(
 );
 ifElseItem.detail = "Cloney - 'if-else' Block";
 ifElseItem.documentation = new vscode.MarkdownString(
-  "The '{{ if }} {{ else }}' block allows you to create an if-else statement. " +
+  "The **{{ if }} {{ else }}** block allows you to create an if-else statement. " +
     "If the condition in '{{ if }}' is true, the first block is rendered; " +
     "otherwise, the '{{ else }}' block is rendered."
 );
@@ -85,7 +85,7 @@ const ifElseIfItem = new vscode.CompletionItem(
 );
 ifElseIfItem.detail = "Cloney - 'if-else-if' Block";
 ifElseIfItem.documentation = new vscode.MarkdownString(
-  "The '{{ if }} {{ else if }} {{ else }}' block allows you to create an " +
+  "The **{{ if }} {{ else if }} {{ else }}** block allows you to create an " +
     "if-else if-else statement. You can evaluate multiple conditions and " +
     "render different blocks based on the conditions."
 );
@@ -100,7 +100,7 @@ const rangeItem = new vscode.CompletionItem(
 );
 rangeItem.detail = "Cloney - 'range' Block";
 rangeItem.documentation = new vscode.MarkdownString(
-  "The '{{ range }}' block is used to iterate over a list of items. " +
+  "The **{{ range }}** block is used to iterate over a list of items. " +
     "It takes a single argument, which is a list of items, and iterates " +
     "over the list, rendering the block of content for each item."
 );
@@ -115,12 +115,32 @@ const withItem = new vscode.CompletionItem(
 );
 withItem.detail = "Cloney - 'with' Block";
 withItem.documentation = new vscode.MarkdownString(
-  "The '{{ with }}' block is used to set the context for a block of content. " +
+  "The **{{ with }}** block is used to set the context for a block of content. " +
     "It takes a single argument, which is the context to set, and then renders " +
     "the enclosed content with the specified context."
 );
 withItem.insertText = new vscode.SnippetString(
   "{{- with ${1:context} }}\n\n{{- end }}"
+);
+
+// Define the 'toFile' Cloney template function completion item.
+const toFileItem = new vscode.CompletionItem(
+  "{{ toFile }}",
+  vscode.CompletionItemKind.Function
+);
+toFileItem.detail = "Cloney - 'toFile' Function";
+toFileItem.documentation = new vscode.MarkdownString(
+  "The **toFile** function allows you to write the output of a template " +
+    "to a file. It takes three parameters:\n\n" +
+    "- The first parameter is the relative path where the file will be created, " +
+    "relative to the path of the current file.\n" +
+    "- The second parameter is the name of a template containing the data that " +
+    "will be written to the file.\n" +
+    "- The third parameter is the template data or context that will be used " +
+    "for rendering the template."
+);
+toFileItem.insertText = new vscode.SnippetString(
+  '{{- toFile "${1:file-path}" "${2:template-name}" ${3:data} -}}'
 );
 
 // Export all Go-template completion items.
@@ -133,4 +153,5 @@ export const goTemplateCompletionItems = [
   ifElseIfItem,
   rangeItem,
   withItem,
+  toFileItem,
 ];
