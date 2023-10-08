@@ -4,13 +4,11 @@ exports.deactivate = exports.activate = void 0;
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
+const constants = require("./constants");
 const cloney_1 = require("./cloney");
 const completion_1 = require("./metadata-file/completion");
 const completion_2 = require("./variables-file/completion");
 const completion_3 = require("./go-templates/completion");
-// Extension commands.
-const CLONE_COMMAND = "cloney.clone";
-const DRY_RUN_COMMAND = "cloney.dry-run";
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 async function activate(context) {
@@ -19,15 +17,18 @@ async function activate(context) {
     if (!(0, cloney_1.isCloneyInstalled)()) {
         const response = await vscode.window.showErrorMessage("It looks like you do not have Cloney installed. Install it to make full use of this extension.", "Install Cloney", "Dismiss");
         if (response === "Install Cloney") {
-            vscode.env.openExternal(vscode.Uri.parse("https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney"));
+            vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
         }
     }
     // Completion providers.
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider("cloney-metadata-file", new completion_1.CloneyMetadataCompletionProvider()));
-    context.subscriptions.push(vscode.languages.registerCompletionItemProvider("cloney-variables-file", new completion_2.CloneyVariablesCompletionProvider()));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(constants.CLONEY_METADATA_FILE_LANGUAGE_ID, new completion_1.CloneyMetadataCompletionProvider()));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider(constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID, new completion_2.CloneyVariablesCompletionProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("*", new completion_3.CloneyGoTemplatesCompletionProvider()));
     // Commands.
-    context.subscriptions.push(vscode.commands.registerCommand(CLONE_COMMAND, async () => {
+    context.subscriptions.push(vscode.commands.registerCommand(constants.OPEN_DOCUMENTATION_COMMAND, () => {
+        vscode.env.openExternal(vscode.Uri.parse(constants.CLONEY_DOCUMENTATION_URL));
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
             vscode.window.showErrorMessage("Cloney clone failed. Please open a folder first.");
@@ -86,7 +87,7 @@ async function activate(context) {
         }
         (0, cloney_1.runCloneyCloneCommand)(workDir, repoURL, repoBranch, repoTag, outputDirName);
     }));
-    context.subscriptions.push(vscode.commands.registerCommand(DRY_RUN_COMMAND, async () => {
+    context.subscriptions.push(vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
             vscode.window.showErrorMessage("Cloney dry-run failed. Please open a folder first.");

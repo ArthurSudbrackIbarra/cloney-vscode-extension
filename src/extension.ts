@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import * as constants from "./constants";
 import {
   isCloneyInstalled,
   runCloneyCloneCommand,
@@ -9,10 +10,6 @@ import {
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
 import { CloneyGoTemplatesCompletionProvider } from "./go-templates/completion";
-
-// Extension commands.
-const CLONE_COMMAND = "cloney.clone";
-const DRY_RUN_COMMAND = "cloney.dry-run";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -27,24 +24,20 @@ export async function activate(context: vscode.ExtensionContext) {
       "Dismiss"
     );
     if (response === "Install Cloney") {
-      vscode.env.openExternal(
-        vscode.Uri.parse(
-          "https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney"
-        )
-      );
+      vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
     }
   }
 
   // Completion providers.
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider(
-      "cloney-metadata-file",
+      constants.CLONEY_METADATA_FILE_LANGUAGE_ID,
       new CloneyMetadataCompletionProvider()
     )
   );
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider(
-      "cloney-variables-file",
+      constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID,
       new CloneyVariablesCompletionProvider()
     )
   );
@@ -57,7 +50,17 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Commands.
   context.subscriptions.push(
-    vscode.commands.registerCommand(CLONE_COMMAND, async () => {
+    vscode.commands.registerCommand(
+      constants.OPEN_DOCUMENTATION_COMMAND,
+      () => {
+        vscode.env.openExternal(
+          vscode.Uri.parse(constants.CLONEY_DOCUMENTATION_URL)
+        );
+      }
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
       if (!workDir) {
         vscode.window.showErrorMessage(
@@ -128,7 +131,7 @@ export async function activate(context: vscode.ExtensionContext) {
     })
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand(DRY_RUN_COMMAND, async () => {
+    vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
       if (!workDir) {
         vscode.window.showErrorMessage(

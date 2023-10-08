@@ -28,6 +28,12 @@
   "contributes": {
     "commands": [
       {
+        "command": "cloney.open-documentation",
+        "title": "Open Cloney's Documentation",
+        "category": "Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
         "command": "cloney.dry-run",
         "title": "Run Cloney Dry-run",
         "category": "Cloney",
