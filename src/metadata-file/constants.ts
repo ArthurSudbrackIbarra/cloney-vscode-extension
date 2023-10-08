@@ -31,7 +31,7 @@ const manifestVersionItem = createFieldCompletionItem(
 
 // Name.
 const nameItem = createFieldCompletionItem(
-  "template_name",
+  "name",
   "The name of your Cloney template, providing a clear identifier for users.",
   true,
   "# (Required) The name of your Cloney template, providing a clear identifier for users.\nname: ${1:Template Name}"
@@ -39,7 +39,7 @@ const nameItem = createFieldCompletionItem(
 
 // Description.
 const descriptionItem = createFieldCompletionItem(
-  "template_description",
+  "description",
   "A brief but informative description of your Cloney template.",
   false,
   "# (Optional) A brief but informative description of your Cloney template.\ndescription: ${1:Template Description}"
@@ -71,7 +71,7 @@ const configurationItem = createFieldCompletionItem(
 
 // Ignore Paths.
 const ignorePathsItem = createFieldCompletionItem(
-  "ignore_paths",
+  "configuration.ignore_paths",
   "A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process.",
   false,
   "ignore_paths:\n  - ${1:path_to_ignore} # (Optional) A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process."
@@ -85,9 +85,17 @@ const variablesItem = createFieldCompletionItem(
   "# (Optional) A list of variables that users can customize during the cloning process.\nvariables:\n  - name: ${1:variable_name}\n    description: ${2:variable_description}\n    default: ${3:variable_default_value}\n    example: ${4:variable_example_value}"
 );
 
+// Variable name.
+const variableNameItem = createFieldCompletionItem(
+  "variable.name",
+  "The name of the variable, providing a clear identifier for users.",
+  true,
+  "name: ${1:variable_name} # (Required) The name of the variable, providing a clear identifier for users."
+);
+
 // Variable description.
 const variableDescriptionItem = createFieldCompletionItem(
-  "variable_description",
+  "variable.description",
   "A description of the variable, providing context for users.",
   false,
   "description: ${1:variable_description} # A description of the variable, providing context for users."
@@ -95,7 +103,7 @@ const variableDescriptionItem = createFieldCompletionItem(
 
 // Variable Default.
 const variableDefaultItem = createFieldCompletionItem(
-  "variable_default_value",
+  "variable.default",
   "The default value of a variable.",
   false,
   "default: ${1:variable_default_value} # (Optional) The default value of the variable."
@@ -103,7 +111,7 @@ const variableDefaultItem = createFieldCompletionItem(
 
 // Variable Example.
 const variableExampleItem = createFieldCompletionItem(
-  "variable_example_value",
+  "variable.example",
   "An example value of the variable.",
   true,
   "example: ${1:variable_example_value} # (Required) An example value of the variable."
@@ -119,6 +127,7 @@ export const metadataFileCompletionItems = [
   configurationItem,
   ignorePathsItem,
   variablesItem,
+  variableNameItem,
   variableDescriptionItem,
   variableDefaultItem,
   variableExampleItem,

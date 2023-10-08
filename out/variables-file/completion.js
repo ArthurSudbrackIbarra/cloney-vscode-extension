@@ -7,6 +7,7 @@ const vscode_1 = require("../vscode"); // Importing readUserFile function
 const simple_git_1 = require("simple-git");
 const os_1 = require("os");
 const fs_1 = require("fs");
+const constants_1 = require("../constants");
 class CloneyVariablesCompletionProvider {
     async provideCompletionItems(document, position, token, context) {
         // First check if the user has specified a remote Cloney repository,
@@ -19,7 +20,7 @@ class CloneyVariablesCompletionProvider {
         // check if the user has a local Cloney metadata file.
         try {
             // Read the Cloney metadata file and find every variable defined in it.
-            const content = await (0, vscode_1.readUserFile)(".cloney.yaml");
+            const content = await (0, vscode_1.readUserFile)(constants_1.CLONEY_METADATA_FILE_NAME);
             if (!content) {
                 return this.completionItemsFromRemoteRepository(document);
             }
@@ -64,7 +65,7 @@ class CloneyVariablesCompletionProvider {
         // In case of error, return an empty array.
         let content;
         try {
-            content = (0, fs_1.readFileSync)(`${tempDir}/.cloney.yaml`, "utf8");
+            content = (0, fs_1.readFileSync)(`${tempDir}/${constants_1.CLONEY_METADATA_FILE_NAME}`, "utf8");
         }
         catch (error) {
             return [];
@@ -72,19 +73,19 @@ class CloneyVariablesCompletionProvider {
         return this.completionItemsFromYAML(content, true);
     }
     completionItemsFromYAML(content, isRemote) {
-        // Parse the YAML content
+        // Parse the YAML content.
         const parsedYAML = yaml.load(content);
         if (!parsedYAML || !parsedYAML.variables) {
             return [];
         }
-        // Extract variables from the parsed YAML
+        // Extract variables from the parsed YAML.
         const variables = parsedYAML.variables;
         const completionItems = [];
-        // Create completion items for each variable
+        // Create completion items for each variable.
         for (const variable of variables) {
             const variableName = variable.name;
             const variableDescription = variable.description;
-            // Create a completion item for the variable
+            // Create a completion item for the variable.
             const variableItem = new vscode.CompletionItem(variableName, vscode.CompletionItemKind.Property);
             // Set details.
             let detail = variableName;
@@ -103,7 +104,7 @@ class CloneyVariablesCompletionProvider {
             variableItem.detail = detail;
             // Set documentation.
             variableItem.documentation = new vscode.MarkdownString(variableDescription);
-            // Convert default and example fields back to YAML, in order to show them as code blocks
+            // Convert default and example fields back to YAML, in order to show them as code blocks.
             const defaultYAML = yaml.dump(variable.default);
             if ("default" in variable) {
                 variableItem.documentation.appendMarkdown(`\n\n**Default:**\n\`\`\`yaml\n${defaultYAML}\n\`\`\``);
@@ -112,7 +113,7 @@ class CloneyVariablesCompletionProvider {
             if ("example" in variable) {
                 variableItem.documentation.appendMarkdown(`\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``);
             }
-            // Set insert text (the text inserted when the completion item is accepted)
+            // Set insert text (the text inserted when the completion item is accepted).
             let snippetStr = "";
             if ("default" in variable) {
                 snippetStr += "# (Optional)";
@@ -140,7 +141,7 @@ class CloneyVariablesCompletionProvider {
     resolveCompletionItem(item, token) {
         // Optionally, you can implement additional logic to resolve completion items
         // This method is called when a user selects a completion item from the list
-        // You can modify the item here, e.g., add documentation or details
+        // You can modify the item here, e.g., add documentation or details.
         return item;
     }
 }

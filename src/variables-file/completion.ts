@@ -4,6 +4,7 @@ import { readUserFile } from "../vscode"; // Importing readUserFile function
 import { simpleGit } from "simple-git";
 import { tmpdir } from "os";
 import { existsSync, readFileSync } from "fs";
+import { CLONEY_METADATA_FILE_NAME } from "../constants";
 
 export class CloneyVariablesCompletionProvider
   implements vscode.CompletionItemProvider
@@ -26,7 +27,7 @@ export class CloneyVariablesCompletionProvider
     // check if the user has a local Cloney metadata file.
     try {
       // Read the Cloney metadata file and find every variable defined in it.
-      const content = await readUserFile(".cloney.yaml");
+      const content = await readUserFile(CLONEY_METADATA_FILE_NAME);
       if (!content) {
         return this.completionItemsFromRemoteRepository(document);
       }
@@ -79,7 +80,7 @@ export class CloneyVariablesCompletionProvider
     // In case of error, return an empty array.
     let content: string;
     try {
-      content = readFileSync(`${tempDir}/.cloney.yaml`, "utf8");
+      content = readFileSync(`${tempDir}/${CLONEY_METADATA_FILE_NAME}`, "utf8");
     } catch (error) {
       return [];
     }
@@ -91,22 +92,22 @@ export class CloneyVariablesCompletionProvider
     content: string,
     isRemote?: boolean
   ): vscode.CompletionItem[] {
-    // Parse the YAML content
+    // Parse the YAML content.
     const parsedYAML = yaml.load(content) as any;
     if (!parsedYAML || !parsedYAML.variables) {
       return [];
     }
 
-    // Extract variables from the parsed YAML
+    // Extract variables from the parsed YAML.
     const variables = parsedYAML.variables as any[];
     const completionItems: vscode.CompletionItem[] = [];
 
-    // Create completion items for each variable
+    // Create completion items for each variable.
     for (const variable of variables) {
       const variableName = variable.name as string;
       const variableDescription = variable.description as string;
 
-      // Create a completion item for the variable
+      // Create a completion item for the variable.
       const variableItem = new vscode.CompletionItem(
         variableName,
         vscode.CompletionItemKind.Property
@@ -131,7 +132,7 @@ export class CloneyVariablesCompletionProvider
         variableDescription
       );
 
-      // Convert default and example fields back to YAML, in order to show them as code blocks
+      // Convert default and example fields back to YAML, in order to show them as code blocks.
       const defaultYAML = yaml.dump(variable.default);
       if ("default" in variable) {
         variableItem.documentation.appendMarkdown(
@@ -145,7 +146,7 @@ export class CloneyVariablesCompletionProvider
         );
       }
 
-      // Set insert text (the text inserted when the completion item is accepted)
+      // Set insert text (the text inserted when the completion item is accepted).
       let snippetStr = "";
       if ("default" in variable) {
         snippetStr += "# (Optional)";
@@ -180,7 +181,7 @@ export class CloneyVariablesCompletionProvider
   ): vscode.ProviderResult<vscode.CompletionItem> {
     // Optionally, you can implement additional logic to resolve completion items
     // This method is called when a user selects a completion item from the list
-    // You can modify the item here, e.g., add documentation or details
+    // You can modify the item here, e.g., add documentation or details.
     return item;
   }
 }

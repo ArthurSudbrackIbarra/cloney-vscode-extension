@@ -15,6 +15,20 @@
     "onLanguage:cloney-variables-file"
   ],
   "contributes": {
+    "commands": [
+      {
+        "command": "cloney.dry-run",
+        "title": "Run Cloney Dry-run",
+        "category": "Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.clone",
+        "title": "Run Cloney Clone",
+        "category": "Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      }
+    ],
     "languages": [
       {
         "id": "cloney-metadata-file",

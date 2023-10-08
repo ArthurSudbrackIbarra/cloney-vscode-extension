@@ -8,12 +8,18 @@
       "name: ${1:Your Cloney template name}",
       "description: ${2:Your Cloney template description.}",
       "authors:",
-      "  - ${3:First author}",
+      "  - ${3:First Author}",
       "license: MIT",
       "template_version: \"0.1.0\"",
       "",
+      "configuration:",
+      "  ignore_paths: []",
+      "",
       "variables:",
-      "  "
+      "  - name: example_variable",
+      "    description: An example description for the variable.",
+      "    default: Default Value",
+      "    example: Example Value"
     ],
     "description": "Create the boilerplate for a Cloney metadata file."
   },
