@@ -3,6 +3,16 @@
   "displayName": "Cloney",
   "description": "Support for the Cloney tool.",
   "version": "0.0.1",
+  "icon": "./images/cloney-logo-no-text-rounded.png",
+  "author": {
+    "name": "Arthur Sudbrack Ibarra"
+  },
+  "homepage": "https://arthursudbrackibarra.github.io/cloney-documentation/",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/ArthurSudbrackIbarra/cloney-vscode-extension",
+    "type": "git"
+  },
   "engines": {
     "vscode": "^1.83.0"
   },
