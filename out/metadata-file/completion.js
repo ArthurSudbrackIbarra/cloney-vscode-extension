@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyMetadataCompletionProvider = void 0;
-const constants_1 = require("./constants");
+const items_1 = require("./items");
 class CloneyMetadataCompletionProvider {
     provideCompletionItems(document, position, token, context) {
-        return constants_1.metadataFileCompletionItems;
+        return items_1.metadataFileCompletionItems;
     }
     resolveCompletionItem(item, token) {
         // Optionally, you can implement additional logic to resolve completion items

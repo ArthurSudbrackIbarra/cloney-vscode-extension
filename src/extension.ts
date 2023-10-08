@@ -8,6 +8,7 @@ import {
 } from "./cloney";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
+import { CloneyGoTemplatesCompletionProvider } from "./go-templates/completion";
 
 // Extension commands.
 const CLONE_COMMAND = "cloney.clone";
@@ -45,6 +46,12 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCompletionItemProvider(
       "cloney-variables-file",
       new CloneyVariablesCompletionProvider()
+    )
+  );
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider(
+      "*",
+      new CloneyGoTemplatesCompletionProvider()
     )
   );
 

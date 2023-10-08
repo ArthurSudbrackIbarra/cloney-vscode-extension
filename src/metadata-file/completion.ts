@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { metadataFileCompletionItems } from "./constants";
+import { metadataFileCompletionItems } from "./items";
 
 export class CloneyMetadataCompletionProvider
   implements vscode.CompletionItemProvider

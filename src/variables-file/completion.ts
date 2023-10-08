@@ -29,12 +29,10 @@ export class CloneyVariablesCompletionProvider
       // Read the Cloney metadata file and find every variable defined in it.
       const content = await readUserFile(CLONEY_METADATA_FILE_NAME);
       if (!content) {
-        return this.completionItemsFromRemoteRepository(document);
+        return [];
       }
-
       return this.completionItemsFromYAML(content);
     } catch (error) {
-      // In case of any error, return an empty array.
       return [];
     }
   }
@@ -105,7 +103,8 @@ export class CloneyVariablesCompletionProvider
     // Create completion items for each variable.
     for (const variable of variables) {
       const variableName = variable.name as string;
-      const variableDescription = variable.description as string;
+      const variableDescription =
+        (variable.description as string) || "No description provided.";
 
       // Create a completion item for the variable.
       const variableItem = new vscode.CompletionItem(
@@ -114,7 +113,7 @@ export class CloneyVariablesCompletionProvider
       );
 
       // Set details.
-      let detail = variableName;
+      let detail = `Cloney Variable '${variableName}'`;
       if ("default" in variable) {
         detail += " (Optional)";
       } else {
@@ -129,7 +128,7 @@ export class CloneyVariablesCompletionProvider
 
       // Set documentation.
       variableItem.documentation = new vscode.MarkdownString(
-        variableDescription
+        `**Description:**\n${variableDescription}`
       );
 
       // Convert default and example fields back to YAML, in order to show them as code blocks.

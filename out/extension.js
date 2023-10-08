@@ -7,6 +7,7 @@ const vscode = require("vscode");
 const cloney_1 = require("./cloney");
 const completion_1 = require("./metadata-file/completion");
 const completion_2 = require("./variables-file/completion");
+const completion_3 = require("./go-templates/completion");
 // Extension commands.
 const CLONE_COMMAND = "cloney.clone";
 const DRY_RUN_COMMAND = "cloney.dry-run";
@@ -24,6 +25,7 @@ async function activate(context) {
     // Completion providers.
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("cloney-metadata-file", new completion_1.CloneyMetadataCompletionProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("cloney-variables-file", new completion_2.CloneyVariablesCompletionProvider()));
+    context.subscriptions.push(vscode.languages.registerCompletionItemProvider("*", new completion_3.CloneyGoTemplatesCompletionProvider()));
     // Commands.
     context.subscriptions.push(vscode.commands.registerCommand(CLONE_COMMAND, async () => {
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
