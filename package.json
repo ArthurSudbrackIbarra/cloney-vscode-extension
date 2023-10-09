@@ -113,6 +113,10 @@
       {
         "language": "cloney-metadata-file",
         "path": "./snippets/cloney-metadata-file-snippets.json"
+      },
+      {
+        "language": "cloney-variables-file",
+        "path": "./snippets/cloney-variables-file-snippets.json"
       }
     ]
   },

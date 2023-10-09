@@ -19,35 +19,35 @@ function isCloneyInstalled() {
 }
 exports.isCloneyInstalled = isCloneyInstalled;
 function runCloneyCloneCommand(options) {
-    let command = `cloney clone ${options.repoURL}`;
+    let command = `cloney clone "${options.repoURL}"`;
     if (options.repoBranch) {
-        command += ` --branch ${options.repoBranch}`;
+        command += ` --branch "${options.repoBranch}"`;
     }
     if (options.repoTag) {
-        command += ` --tag ${options.repoTag}`;
+        command += ` --tag "${options.repoTag}"`;
     }
-    command += ` --output ${options.workDir}/${options.outputDirName}`;
+    command += ` --output "${options.workDir}/${options.outputDirName}"`;
     if (options.variables) {
-        command += ` --variables ${options.variables}`;
+        command += ` --variables "${options.variables}"`;
     }
     let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney clone");
     if (!terminal) {
-        terminal = vscode.window.createTerminal("Cloney clone");
+        terminal = vscode.window.createTerminal("Cloney Clone");
     }
-    terminal.sendText(command);
+    terminal.sendText(command, true);
     terminal.show();
 }
 exports.runCloneyCloneCommand = runCloneyCloneCommand;
 function runCloneyDryRunCommand(options) {
-    let command = `cloney dry-run ${options.workDir} --output ${options.workDir}/cloney-dry-run-results`;
+    let command = `cloney dry-run "${options.workDir}" --output "${options.workDir}/cloney-dry-run-results"`;
     if (options.variables) {
-        command += ` --variables ${options.variables}`;
+        command += ` --variables "${options.variables}"`;
     }
     let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney dry-run");
     if (!terminal) {
-        terminal = vscode.window.createTerminal("Cloney dry-run");
+        terminal = vscode.window.createTerminal("Cloney Dry-Run");
     }
-    terminal.sendText(command);
+    terminal.sendText(command, true);
     terminal.show();
 }
 exports.runCloneyDryRunCommand = runCloneyDryRunCommand;

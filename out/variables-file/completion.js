@@ -11,8 +11,7 @@ const constants_1 = require("../constants");
 // Defines a completion provider for Cloney Variables.
 class CloneyVariablesCompletionProvider {
     async provideCompletionItems(document, position, token, context) {
-        // First check if the user has specified a remote Cloney repository,
-        // using the # Repository: https://... annotation.
+        // Check if the user has specified a remote Cloney repository
         const remoteRepositoryCompletionItems = await this.completionItemsFromRemoteRepository(document);
         if (remoteRepositoryCompletionItems.length > 0) {
             return remoteRepositoryCompletionItems;
@@ -32,30 +31,63 @@ class CloneyVariablesCompletionProvider {
         }
     }
     async completionItemsFromRemoteRepository(document) {
-        // Get the first line of the document.
-        // If the line is empty, return an empty array.
-        const firstLine = document.lineAt(0);
-        if (!firstLine || !firstLine.text) {
-            return [];
-        }
-        // Define a regular expression to capture the repository URL, owner, and name.
-        const regex = /# *repository: *(https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\.git)/;
-        // Use exec to find the match and capture the group.
-        const match = regex.exec(firstLine.text.toLowerCase());
-        if (!match || match.length < 3) {
+        // Get the document text.
+        const text = document.getText().toLowerCase();
+        // Define regular expressions to capture repository URL, owner, name, branch, and tag.
+        const repoRegex = /# *\(cloney\) repository: *(https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\.git)/;
+        const branchRegex = /# *\(cloney\) branch: *([a-zA-Z0-9\-_]+)/;
+        const tagRegex = /# *\(cloney\) tag: *([a-zA-Z0-9\-_\.]+)/;
+        // Use exec to find the matches and capture the groups.
+        const repoMatch = repoRegex.exec(text);
+        if (!repoMatch || repoMatch.length < 3) {
             return [];
         }
         // Extract captured values.
-        const repositoryURL = match[1];
-        const repositoryOwner = match[2];
-        const repositoryName = match[3];
-        // Check if the repository has already been cloned.
-        // If not, clone it.
-        const tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}`;
+        const repositoryURL = repoMatch[1];
+        const repositoryOwner = repoMatch[2];
+        const repositoryName = repoMatch[3];
+        let branchName = undefined;
+        const branchMatch = branchRegex.exec(text);
+        if (branchMatch && branchMatch.length >= 2) {
+            branchName = branchMatch[1];
+        }
+        let tagName = undefined;
+        const tagMatch = tagRegex.exec(text);
+        if (tagMatch && tagMatch.length >= 2) {
+            tagName = tagMatch[1];
+        }
+        // Define temporary directory and clone options based on branch/tag presence.
+        let tempDir = "";
+        let cloneOptions = {};
+        if (!branchName && !tagName) {
+            // Use main branch
+            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/main`;
+            cloneOptions = {
+                "--branch": "main",
+                "--depth": 1,
+            };
+        }
+        else if (branchName) {
+            // Use specified branch
+            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${branchName}`;
+            cloneOptions = {
+                "--branch": branchName,
+                "--depth": 1,
+            };
+        }
+        else if (tagName) {
+            // Use specified tag
+            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${tagName}`;
+            cloneOptions = {
+                "--branch": tagName,
+                "--depth": 1,
+            };
+        }
+        // Check if the repository has already been cloned. If not, clone it.
         if (!(0, fs_1.existsSync)(tempDir)) {
             const git = (0, simple_git_1.simpleGit)();
             try {
-                await git.clone(repositoryURL, tempDir);
+                await git.clone(repositoryURL, tempDir, cloneOptions);
             }
             catch (error) {
                 return [];
