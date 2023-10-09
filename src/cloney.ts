@@ -33,7 +33,6 @@ export function runCloneyCloneCommand(options: CloneyCloneCommandOptions) {
   if (options.repoTag) {
     command += ` --tag ${options.repoTag}`;
   }
-  command += ` --variables ${options.workDir}/${CLONEY_VARIABLES_FILE_NAME}`;
   command += ` --output ${options.workDir}/${options.outputDirName}`;
   if (options.variables) {
     command += ` --variables ${options.variables}`;

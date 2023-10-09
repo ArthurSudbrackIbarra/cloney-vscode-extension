@@ -35,13 +35,13 @@
       },
       {
         "command": "cloney.dry-run",
-        "title": "Run Cloney Dry-run",
+        "title": "Run Cloney Dry-Run Here",
         "category": "Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       },
       {
         "command": "cloney.clone",
-        "title": "Run Cloney Clone",
+        "title": "Clone a Cloney Template Repository Here",
         "category": "Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       }
@@ -66,7 +66,30 @@
           "Cloney Variables File"
         ],
         "filenames": [
-          ".cloney-vars.yaml"
+          ".cloney-vars.yaml",
+          "cloney-vars.yaml",
+          ".cloney-vars.yml",
+          "cloney-vars.yml",
+          "cloney-variables.yaml",
+          "cloney-variables.yml",
+          ".cloney-variables.yaml",
+          ".cloney-variables.yml",
+          "vars-cloney.yaml",
+          "vars-cloney.yml",
+          ".vars-cloney.yaml",
+          ".vars-cloney.yml",
+          ".cloney_vars.yaml",
+          "cloney_vars.yaml",
+          ".cloney_vars.yml",
+          "cloney_vars.yml",
+          "cloney_variables.yaml",
+          "cloney_variables.yml",
+          ".cloney_variables.yaml",
+          ".cloney_variables.yml",
+          "vars_cloney.yaml",
+          "vars_cloney.yml",
+          ".vars_cloney.yaml",
+          ".vars_cloney.yml"
         ],
         "icon": {
           "light": "./images/cloney-logo-no-text-rounded.png",

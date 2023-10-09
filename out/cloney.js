@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.isCloneyInstalled = void 0;
 const vscode = require("vscode");
 const child_process_1 = require("child_process");
-const constants_1 = require("./constants");
 // Function to check if Cloney is installed or not.
 function isCloneyInstalled() {
     const command = "cloney version";
@@ -27,7 +26,6 @@ function runCloneyCloneCommand(options) {
     if (options.repoTag) {
         command += ` --tag ${options.repoTag}`;
     }
-    command += ` --variables ${options.workDir}/${constants_1.CLONEY_VARIABLES_FILE_NAME}`;
     command += ` --output ${options.workDir}/${options.outputDirName}`;
     if (options.variables) {
         command += ` --variables ${options.variables}`;
