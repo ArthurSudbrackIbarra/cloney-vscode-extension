@@ -19,17 +19,19 @@ function isCloneyInstalled() {
     }
 }
 exports.isCloneyInstalled = isCloneyInstalled;
-// Function to run Cloney 'clone' command.
-function runCloneyCloneCommand(workDir, repoURL, repoBranch, repoTag, outputDirName) {
-    let command = `cloney clone ${repoURL}`;
-    if (repoBranch) {
-        command += ` --branch ${repoBranch}`;
+function runCloneyCloneCommand(options) {
+    let command = `cloney clone ${options.repoURL}`;
+    if (options.repoBranch) {
+        command += ` --branch ${options.repoBranch}`;
     }
-    if (repoTag) {
-        command += ` --tag ${repoTag}`;
+    if (options.repoTag) {
+        command += ` --tag ${options.repoTag}`;
     }
-    command += ` --variables ${workDir}/${constants_1.CLONEY_VARIABLES_FILE_NAME}`;
-    command += ` --output ${workDir}/${outputDirName}`;
+    command += ` --variables ${options.workDir}/${constants_1.CLONEY_VARIABLES_FILE_NAME}`;
+    command += ` --output ${options.workDir}/${options.outputDirName}`;
+    if (options.variables) {
+        command += ` --variables ${options.variables}`;
+    }
     let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney clone");
     if (!terminal) {
         terminal = vscode.window.createTerminal("Cloney clone");
@@ -38,9 +40,11 @@ function runCloneyCloneCommand(workDir, repoURL, repoBranch, repoTag, outputDirN
     terminal.show();
 }
 exports.runCloneyCloneCommand = runCloneyCloneCommand;
-// Function to run Cloney 'dry-run' command.
-function runCloneyDryRunCommand(workDir) {
-    const command = `cloney dry-run ${workDir} --variables ${workDir}/${constants_1.CLONEY_VARIABLES_FILE_NAME} --output ${workDir}/cloney-dry-run-results`;
+function runCloneyDryRunCommand(options) {
+    let command = `cloney dry-run ${options.workDir} --output ${options.workDir}/cloney-dry-run-results`;
+    if (options.variables) {
+        command += ` --variables ${options.variables}`;
+    }
     let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney dry-run");
     if (!terminal) {
         terminal = vscode.window.createTerminal("Cloney dry-run");

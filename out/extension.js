@@ -25,9 +25,11 @@ async function activate(context) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID, new completion_2.CloneyVariablesCompletionProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("*", new completion_3.CloneyGoTemplatesCompletionProvider()));
     // Commands.
+    // Open Documentation.
     context.subscriptions.push(vscode.commands.registerCommand(constants.OPEN_DOCUMENTATION_COMMAND, () => {
         vscode.env.openExternal(vscode.Uri.parse(constants.CLONEY_DOCUMENTATION_URL));
     }));
+    // Clone.
     context.subscriptions.push(vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
@@ -85,15 +87,54 @@ async function activate(context) {
         if (!outputDirName) {
             return;
         }
-        (0, cloney_1.runCloneyCloneCommand)(workDir, repoURL, repoBranch, repoTag, outputDirName);
+        const variablesFile = await vscode.window.showOpenDialog({
+            title: "Variables File",
+            defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: {
+                "Cloney Variables File": ["yaml", "yml"],
+            },
+            openLabel: "Select Variables File",
+        });
+        if (!variablesFile) {
+            return;
+        }
+        (0, cloney_1.runCloneyCloneCommand)({
+            workDir,
+            repoURL,
+            repoBranch,
+            repoTag,
+            outputDirName,
+            variables: variablesFile?.[0].fsPath,
+        });
     }));
+    // Dry Run.
     context.subscriptions.push(vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
             vscode.window.showErrorMessage("Cloney dry-run failed. Please open a folder first.");
             return;
         }
-        (0, cloney_1.runCloneyDryRunCommand)(workDir);
+        const variablesFile = await vscode.window.showOpenDialog({
+            title: "Variables File",
+            defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
+            canSelectFiles: true,
+            canSelectFolders: false,
+            canSelectMany: false,
+            filters: {
+                "Cloney Variables File": ["yaml", "yml"],
+            },
+            openLabel: "Select Variables File",
+        });
+        if (!variablesFile) {
+            return;
+        }
+        (0, cloney_1.runCloneyDryRunCommand)({
+            workDir,
+            variables: variablesFile?.[0].fsPath,
+        });
     }));
 }
 exports.activate = activate;

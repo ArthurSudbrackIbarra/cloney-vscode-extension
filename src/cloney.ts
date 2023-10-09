@@ -17,22 +17,27 @@ export function isCloneyInstalled(): boolean {
 }
 
 // Function to run Cloney 'clone' command.
-export function runCloneyCloneCommand(
-  workDir: string,
-  repoURL: string,
-  repoBranch: string | undefined,
-  repoTag: string | undefined,
-  outputDirName: string
-) {
-  let command = `cloney clone ${repoURL}`;
-  if (repoBranch) {
-    command += ` --branch ${repoBranch}`;
+export interface CloneyCloneCommandOptions {
+  workDir: string;
+  repoURL: string;
+  repoBranch?: string;
+  repoTag?: string;
+  outputDirName: string;
+  variables?: string;
+}
+export function runCloneyCloneCommand(options: CloneyCloneCommandOptions) {
+  let command = `cloney clone ${options.repoURL}`;
+  if (options.repoBranch) {
+    command += ` --branch ${options.repoBranch}`;
   }
-  if (repoTag) {
-    command += ` --tag ${repoTag}`;
+  if (options.repoTag) {
+    command += ` --tag ${options.repoTag}`;
   }
-  command += ` --variables ${workDir}/${CLONEY_VARIABLES_FILE_NAME}`;
-  command += ` --output ${workDir}/${outputDirName}`;
+  command += ` --variables ${options.workDir}/${CLONEY_VARIABLES_FILE_NAME}`;
+  command += ` --output ${options.workDir}/${options.outputDirName}`;
+  if (options.variables) {
+    command += ` --variables ${options.variables}`;
+  }
   let terminal = vscode.window.terminals.find(
     (terminal) => terminal.name === "Cloney clone"
   );
@@ -44,8 +49,15 @@ export function runCloneyCloneCommand(
 }
 
 // Function to run Cloney 'dry-run' command.
-export function runCloneyDryRunCommand(workDir: string) {
-  const command = `cloney dry-run ${workDir} --variables ${workDir}/${CLONEY_VARIABLES_FILE_NAME} --output ${workDir}/cloney-dry-run-results`;
+export interface CloneyDryRunCommandOptions {
+  workDir: string;
+  variables?: string;
+}
+export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
+  let command = `cloney dry-run ${options.workDir} --output ${options.workDir}/cloney-dry-run-results`;
+  if (options.variables) {
+    command += ` --variables ${options.variables}`;
+  }
   let terminal = vscode.window.terminals.find(
     (terminal) => terminal.name === "Cloney dry-run"
   );

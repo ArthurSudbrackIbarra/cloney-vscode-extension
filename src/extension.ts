@@ -49,6 +49,8 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   // Commands.
+
+  // Open Documentation.
   context.subscriptions.push(
     vscode.commands.registerCommand(
       constants.OPEN_DOCUMENTATION_COMMAND,
@@ -59,6 +61,8 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     )
   );
+
+  // Clone.
   context.subscriptions.push(
     vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
@@ -121,15 +125,35 @@ export async function activate(context: vscode.ExtensionContext) {
       if (!outputDirName) {
         return;
       }
-      runCloneyCloneCommand(
+      const variablesFile = await vscode.window.showOpenDialog({
+        title: "Variables File",
+        defaultUri: vscode.Uri.file(
+          `${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`
+        ),
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        filters: {
+          "Cloney Variables File": ["yaml", "yml"],
+        },
+        openLabel: "Select Variables File",
+      });
+      if (!variablesFile) {
+        return;
+      }
+
+      runCloneyCloneCommand({
         workDir,
         repoURL,
         repoBranch,
         repoTag,
-        outputDirName
-      );
+        outputDirName,
+        variables: variablesFile?.[0].fsPath,
+      });
     })
   );
+
+  // Dry Run.
   context.subscriptions.push(
     vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
@@ -139,7 +163,27 @@ export async function activate(context: vscode.ExtensionContext) {
         );
         return;
       }
-      runCloneyDryRunCommand(workDir);
+      const variablesFile = await vscode.window.showOpenDialog({
+        title: "Variables File",
+        defaultUri: vscode.Uri.file(
+          `${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`
+        ),
+        canSelectFiles: true,
+        canSelectFolders: false,
+        canSelectMany: false,
+        filters: {
+          "Cloney Variables File": ["yaml", "yml"],
+        },
+        openLabel: "Select Variables File",
+      });
+      if (!variablesFile) {
+        return;
+      }
+
+      runCloneyDryRunCommand({
+        workDir,
+        variables: variablesFile?.[0].fsPath,
+      });
     })
   );
 }
