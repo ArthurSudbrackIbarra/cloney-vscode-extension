@@ -5,7 +5,6 @@ const vscode = require("vscode");
 const yaml = require("js-yaml");
 const vscode_1 = require("../vscode"); // Importing readUserFile function
 const simple_git_1 = require("simple-git");
-const os_1 = require("os");
 const fs_1 = require("fs");
 const constants_1 = require("../constants");
 // Defines a completion provider for Cloney Variables.
@@ -61,7 +60,7 @@ class CloneyVariablesCompletionProvider {
         let cloneOptions = {};
         if (!branchName && !tagName) {
             // Use main branch
-            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/main`;
+            tempDir = `${constants_1.CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/main`;
             cloneOptions = {
                 "--branch": "main",
                 "--depth": 1,
@@ -69,7 +68,7 @@ class CloneyVariablesCompletionProvider {
         }
         else if (branchName) {
             // Use specified branch
-            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${branchName}`;
+            tempDir = `${constants_1.CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/${branchName}`;
             cloneOptions = {
                 "--branch": branchName,
                 "--depth": 1,
@@ -77,7 +76,7 @@ class CloneyVariablesCompletionProvider {
         }
         else if (tagName) {
             // Use specified tag
-            tempDir = `${(0, os_1.tmpdir)()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${tagName}`;
+            tempDir = `${constants_1.CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/${tagName}`;
             cloneOptions = {
                 "--branch": tagName,
                 "--depth": 1,

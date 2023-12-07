@@ -1,18 +1,23 @@
 import * as vscode from "vscode";
 import { execSync } from "child_process";
-import { CLONEY_VARIABLES_FILE_NAME } from "./constants";
 
-// Function to check if Cloney is installed or not.
-export function isCloneyInstalled(): boolean {
+// Function to get the current version of Cloney.
+export function getCloneyVersion(): string | null {
   const command = "cloney version";
   try {
     // Try to execute the 'cloney version' command.
     // If it succeeds, Cloney is installed.
-    execSync(command);
-    return true;
+    const output = execSync(command).toString();
+    const versionRegex = /version ([\d\.]+)/;
+    const versionMatch = versionRegex.exec(output);
+    if (versionMatch) {
+      return versionMatch[1];
+    } else {
+      return null;
+    }
   } catch (error) {
     // If the command fails, Cloney is not installed.
-    return false;
+    return null;
   }
 }
 
@@ -51,11 +56,15 @@ export function runCloneyCloneCommand(options: CloneyCloneCommandOptions) {
 export interface CloneyDryRunCommandOptions {
   workDir: string;
   variables?: string;
+  hotReload?: boolean;
 }
 export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
   let command = `cloney dry-run "${options.workDir}" --output "${options.workDir}/cloney-dry-run-results"`;
   if (options.variables) {
     command += ` --variables "${options.variables}"`;
+  }
+  if (options.hotReload) {
+    command += ` --hot-reload`;
   }
   let terminal = vscode.window.terminals.find(
     (terminal) => terminal.name === "Cloney dry-run"

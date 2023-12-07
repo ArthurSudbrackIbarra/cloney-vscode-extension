@@ -4,7 +4,10 @@ import { readUserFile } from "../vscode"; // Importing readUserFile function
 import { simpleGit, TaskOptions } from "simple-git";
 import { tmpdir } from "os";
 import { existsSync, readFileSync } from "fs";
-import { CLONEY_METADATA_FILE_NAME } from "../constants";
+import {
+  CLONEY_METADATA_FILE_NAME,
+  CLONEY_EXTENSION_TEMP_DIR,
+} from "../constants";
 
 // Defines a completion provider for Cloney Variables.
 export class CloneyVariablesCompletionProvider
@@ -78,21 +81,21 @@ export class CloneyVariablesCompletionProvider
 
     if (!branchName && !tagName) {
       // Use main branch
-      tempDir = `${tmpdir()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/main`;
+      tempDir = `${CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/main`;
       cloneOptions = {
         "--branch": "main",
         "--depth": 1,
       };
     } else if (branchName) {
       // Use specified branch
-      tempDir = `${tmpdir()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${branchName}`;
+      tempDir = `${CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/${branchName}`;
       cloneOptions = {
         "--branch": branchName,
         "--depth": 1,
       };
     } else if (tagName) {
       // Use specified tag
-      tempDir = `${tmpdir()}/cloney-vscode-extension/${repositoryOwner}/${repositoryName}/${tagName}`;
+      tempDir = `${CLONEY_EXTENSION_TEMP_DIR}/${repositoryOwner}/${repositoryName}/${tagName}`;
       cloneOptions = {
         "--branch": tagName,
         "--depth": 1,

@@ -9,13 +9,15 @@ const cloney_1 = require("./cloney");
 const completion_1 = require("./metadata-file/completion");
 const completion_2 = require("./variables-file/completion");
 const completion_3 = require("./go-templates/completion");
+const fs_1 = require("fs");
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 async function activate(context) {
     console.log("Cloney extension activated.");
     // Check if Cloney is installed.
-    if (!(0, cloney_1.isCloneyInstalled)()) {
-        const response = await vscode.window.showErrorMessage("It looks like you do not have Cloney installed. Install it to make full use of this extension.", "Install Cloney", "Dismiss");
+    const cloneyVersion = (0, cloney_1.getCloneyVersion)();
+    if (!cloneyVersion) {
+        const response = await vscode.window.showErrorMessage("It looks like you do not have Cloney 1.0.0 or above installed. Install it to make full use of this extension.", "Install Cloney", "Dismiss");
         if (response === "Install Cloney") {
             vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
         }
@@ -31,11 +33,13 @@ async function activate(context) {
     }));
     // Clone.
     context.subscriptions.push(vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
+        // Work directory.
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
             vscode.window.showErrorMessage("Cloney clone failed. Please open a folder first.");
             return;
         }
+        // Template repository.
         const repoURL = await vscode.window.showInputBox({
             title: "Cloney Template Repository URL",
             prompt: "Enter the Cloney template repository URL",
@@ -78,6 +82,7 @@ async function activate(context) {
                 return;
             }
         }
+        // Output directory.
         const outputDirName = await vscode.window.showInputBox({
             title: "Target Directory Name",
             prompt: "Enter the target directory, where the template will be cloned",
@@ -87,20 +92,30 @@ async function activate(context) {
         if (!outputDirName) {
             return;
         }
-        const variablesFile = await vscode.window.showOpenDialog({
+        // Variables file.
+        const shouldSelectVariablesFile = await vscode.window.showQuickPick(["Yes", "No"], {
             title: "Variables File",
-            defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
-            canSelectFiles: true,
-            canSelectFolders: false,
-            canSelectMany: false,
-            filters: {
-                "Cloney Variables File": ["yaml", "yml"],
-            },
-            openLabel: "Select Variables File",
+            placeHolder: "Would you like to select a variables file?",
+            ignoreFocusOut: true,
         });
-        if (!variablesFile) {
-            return;
+        let variablesFile;
+        if (shouldSelectVariablesFile === "Yes") {
+            variablesFile = await vscode.window.showOpenDialog({
+                title: "Variables File",
+                defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
+                canSelectFiles: true,
+                canSelectFolders: false,
+                canSelectMany: false,
+                filters: {
+                    "Cloney Variables File": ["yaml", "yml"],
+                },
+                openLabel: "Select Variables File",
+            });
+            if (!variablesFile) {
+                return;
+            }
         }
+        // Run the command.
         (0, cloney_1.runCloneyCloneCommand)({
             workDir,
             repoURL,
@@ -112,28 +127,46 @@ async function activate(context) {
     }));
     // Dry Run.
     context.subscriptions.push(vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
+        // Work directory.
         const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
         if (!workDir) {
             vscode.window.showErrorMessage("Cloney dry-run failed. Please open a folder first.");
             return;
         }
-        const variablesFile = await vscode.window.showOpenDialog({
+        const shouldSelectVariablesFile = await vscode.window.showQuickPick(["Yes", "No"], {
             title: "Variables File",
-            defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
-            canSelectFiles: true,
-            canSelectFolders: false,
-            canSelectMany: false,
-            filters: {
-                "Cloney Variables File": ["yaml", "yml"],
-            },
-            openLabel: "Select Variables File",
+            placeHolder: "Would you like to select a variables file?",
+            ignoreFocusOut: true,
         });
-        if (!variablesFile) {
-            return;
+        // Variables file.
+        let variablesFile;
+        if (shouldSelectVariablesFile === "Yes") {
+            variablesFile = await vscode.window.showOpenDialog({
+                title: "Variables File",
+                defaultUri: vscode.Uri.file(`${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`),
+                canSelectFiles: true,
+                canSelectFolders: false,
+                canSelectMany: false,
+                filters: {
+                    "Cloney Variables File": ["yaml", "yml"],
+                },
+                openLabel: "Select Variables File",
+            });
+            if (!variablesFile) {
+                return;
+            }
         }
+        // Hot reload.
+        const hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
+            title: "Hot Reload",
+            placeHolder: "Would you like to enable hot reload?",
+            ignoreFocusOut: true,
+        });
+        // Run the command.
         (0, cloney_1.runCloneyDryRunCommand)({
             workDir,
             variables: variablesFile?.[0].fsPath,
+            hotReload: hotReload === "Yes",
         });
     }));
 }
@@ -141,6 +174,11 @@ exports.activate = activate;
 // This method is called when your extension is deactivated
 function deactivate() {
     console.log("Cloney extension deactivated.");
+    // On deactivation, delete contents of the temp directory.
+    try {
+        (0, fs_1.rmSync)(constants.CLONEY_EXTENSION_TEMP_DIR, { recursive: true });
+    }
+    catch (error) { }
 }
 exports.deactivate = deactivate;
 //# sourceMappingURL=extension.js.map
