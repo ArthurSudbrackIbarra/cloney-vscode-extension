@@ -22,7 +22,10 @@ export const CLONEY_DOCUMENTATION_URL =
 // Defines the temporary directory for Cloney extension.
 export const CLONEY_EXTENSION_TEMP_DIR = `${tmpdir()}/cloney-vscode-extension`;
 
-// Defines the Cloney extension user settings.
+// Defines the names of the Cloney extension user settings.
 export const EXTENSION_SETTINGS = {
   cloneyExecutablePath: "cloney.cloneyExecutablePath",
 };
+
+// Defines the compatible major version of Cloney.
+export const COMPATIBLE_CLONEY_MAJOR_VERSION = 1;

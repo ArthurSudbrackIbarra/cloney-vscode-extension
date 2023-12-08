@@ -17,9 +17,22 @@ async function activate(context) {
     // Check if Cloney is installed.
     const cloneyVersion = (0, cloney_1.getCloneyVersion)();
     if (!cloneyVersion) {
-        const response = await vscode.window.showErrorMessage("It looks like you do not have Cloney 1.0.0 or above installed. Install it to make full use of this extension.", "Install Cloney", "Dismiss");
+        const response = await vscode.window.showErrorMessage("It appears that you do not have Cloney installed. Install it to make full use of this extension.", "Install Cloney", "Configure Executable Path", "Dismiss");
         if (response === "Install Cloney") {
             vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
+        }
+        else if (response === "Configure Executable Path") {
+            vscode.commands.executeCommand("workbench.action.openSettings", constants.EXTENSION_SETTINGS.cloneyExecutablePath);
+        }
+    }
+    else {
+        // Check if Cloney is compatible.
+        const isVersionCompatible = (0, cloney_1.isCloneyVersionCompatible)(cloneyVersion, constants.COMPATIBLE_CLONEY_MAJOR_VERSION);
+        if (!isVersionCompatible) {
+            const response = await vscode.window.showWarningMessage(`It appears that you have Cloney "${cloneyVersion}" installed. This extension is designed to work with Cloney in versions "${constants.COMPATIBLE_CLONEY_MAJOR_VERSION}.x.x". It is *highly* recommended that you install the proper version of Cloney.`, "Install Cloney", "Dismiss");
+            if (response === "Install Cloney") {
+                vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
+            }
         }
     }
     // Completion providers.

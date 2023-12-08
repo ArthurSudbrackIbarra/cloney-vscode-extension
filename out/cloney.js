@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.getCloneyVersion = void 0;
+exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.isCloneyVersionCompatible = exports.getCloneyVersion = void 0;
 const vscode = require("vscode");
 const child_process_1 = require("child_process");
 const vscode_1 = require("./vscode");
@@ -31,7 +31,7 @@ function getCloneyVersion() {
         const output = (0, child_process_1.execSync)(command, {
             shell: process.platform === "win32" ? "powershell.exe" : undefined,
         }).toString();
-        const versionRegex = /version ([\d\.]+)/;
+        const versionRegex = /(\d+\.\d+\.\d+)/;
         const versionMatch = versionRegex.exec(output);
         if (versionMatch) {
             return versionMatch[1];
@@ -46,6 +46,22 @@ function getCloneyVersion() {
     }
 }
 exports.getCloneyVersion = getCloneyVersion;
+// Function to check if a version of Cloney is compatible with a given major version.
+// For example, if the given version is '1.2.3', and the given major version is '1',
+// this function will return 'true'. If the given version is '2.0.0', this function
+// will return 'false'.
+function isCloneyVersionCompatible(version, majorVersion) {
+    const versionRegex = /(\d+)\.(\d+)\.(\d+)/;
+    const versionMatch = versionRegex.exec(version);
+    if (versionMatch) {
+        const versionMajor = parseInt(versionMatch[1]);
+        return versionMajor === majorVersion;
+    }
+    else {
+        return false;
+    }
+}
+exports.isCloneyVersionCompatible = isCloneyVersionCompatible;
 function runCloneyCloneCommand(options) {
     let command = cloneyCommand(`clone "${options.repoURL}"`);
     if (options.repoBranch) {

@@ -31,7 +31,7 @@ export function getCloneyVersion(): string | null {
     const output = execSync(command, {
       shell: process.platform === "win32" ? "powershell.exe" : undefined,
     }).toString();
-    const versionRegex = /version ([\d\.]+)/;
+    const versionRegex = /(\d+\.\d+\.\d+)/;
     const versionMatch = versionRegex.exec(output);
     if (versionMatch) {
       return versionMatch[1];
@@ -41,6 +41,24 @@ export function getCloneyVersion(): string | null {
   } catch (error) {
     // If the command fails, Cloney is not installed.
     return null;
+  }
+}
+
+// Function to check if a version of Cloney is compatible with a given major version.
+// For example, if the given version is '1.2.3', and the given major version is '1',
+// this function will return 'true'. If the given version is '2.0.0', this function
+// will return 'false'.
+export function isCloneyVersionCompatible(
+  version: string,
+  majorVersion: number
+): boolean {
+  const versionRegex = /(\d+)\.(\d+)\.(\d+)/;
+  const versionMatch = versionRegex.exec(version);
+  if (versionMatch) {
+    const versionMajor = parseInt(versionMatch[1]);
+    return versionMajor === majorVersion;
+  } else {
+    return false;
   }
 }
 
