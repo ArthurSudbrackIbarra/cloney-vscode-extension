@@ -3,7 +3,7 @@
   "displayName": "Cloney",
   "description": "Enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.",
   "version": "0.0.1",
-  "icon": "./images/cloney-logo-no-text-rounded.png",
+  "icon": "./images/cloney-logo-rounded.png",
   "author": {
     "name": "Arthur Sudbrack Ibarra"
   },

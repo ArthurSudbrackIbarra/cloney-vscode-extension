@@ -22,7 +22,11 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 
   - Supports .cloney-vars variables file.
 
+    **Local Variables**:
     ![Variables File Snippets](images/demo/variables-file-snippets.png)
+
+    **Remote Variables**:
+    ![Remote Variables File Snippets](images/demo/variables-file-snippets-remote.png)
 
   - Provides partial autocompletion for Go template syntax.
 
