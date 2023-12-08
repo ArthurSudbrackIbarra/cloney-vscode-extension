@@ -1,7 +1,7 @@
 {
   "name": "cloney",
   "displayName": "Cloney",
-  "description": "Support for the Cloney tool.",
+  "description": "Enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.",
   "version": "0.0.1",
   "icon": "./images/cloney-logo-no-text-rounded.png",
   "author": {
@@ -44,6 +44,12 @@
         "title": "Clone a Cloney Template Repository Here",
         "category": "Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.validate",
+        "title": "Validate this Cloney Template Repository",
+        "category": "Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
       }
     ],
     "languages": [
@@ -66,30 +72,7 @@
           "Cloney Variables File"
         ],
         "filenames": [
-          ".cloney-vars.yaml",
-          "cloney-vars.yaml",
-          ".cloney-vars.yml",
-          "cloney-vars.yml",
-          "cloney-variables.yaml",
-          "cloney-variables.yml",
-          ".cloney-variables.yaml",
-          ".cloney-variables.yml",
-          "vars-cloney.yaml",
-          "vars-cloney.yml",
-          ".vars-cloney.yaml",
-          ".vars-cloney.yml",
-          ".cloney_vars.yaml",
-          "cloney_vars.yaml",
-          ".cloney_vars.yml",
-          "cloney_vars.yml",
-          "cloney_variables.yaml",
-          "cloney_variables.yml",
-          ".cloney_variables.yaml",
-          ".cloney_variables.yml",
-          "vars_cloney.yaml",
-          "vars_cloney.yml",
-          ".vars_cloney.yaml",
-          ".vars_cloney.yml"
+          ".cloney-vars.yaml"
         ],
         "icon": {
           "light": "./images/cloney-logo-no-text-rounded.png",
@@ -119,7 +102,7 @@
         "path": "./snippets/cloney-variables-file-snippets.json"
       }
     ],
-    "configuration":[
+    "configuration": [
       {
         "title": "Cloney Extension",
         "properties": {

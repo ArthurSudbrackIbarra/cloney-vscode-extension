@@ -112,7 +112,7 @@ export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
     command += ` --variables "${options.variables}"`;
   }
   if (options.hotReload) {
-    command += ` --hot-reload`;
+    command += " --hot-reload";
   }
   let terminal = vscode.window.terminals.find(
     (terminal) => terminal.name === "Cloney Dry-Run"
@@ -122,6 +122,24 @@ export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
     // Otherwise, create a new terminal with the default shell.
     terminal = vscode.window.createTerminal(
       "Cloney Dry-Run",
+      process.platform === "win32" ? "powershell.exe" : undefined
+    );
+  }
+  terminal.sendText(command, true);
+  terminal.show();
+}
+
+// Function to run Cloney 'validate' command.
+export function runCloneyValidateCommand(workDir: string) {
+  const command = cloneyCommand(`validate "${workDir}"`);
+  let terminal = vscode.window.terminals.find(
+    (terminal) => terminal.name === "Cloney Validate"
+  );
+  if (!terminal) {
+    // If on Windows, create a new terminal with the PowerShell shell.
+    // Otherwise, create a new terminal with the default shell.
+    terminal = vscode.window.createTerminal(
+      "Cloney Validate",
       process.platform === "win32" ? "powershell.exe" : undefined
     );
   }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.isCloneyVersionCompatible = exports.getCloneyVersion = void 0;
+exports.runCloneyValidateCommand = exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.isCloneyVersionCompatible = exports.getCloneyVersion = void 0;
 const vscode = require("vscode");
 const child_process_1 = require("child_process");
 const vscode_1 = require("./vscode");
@@ -90,7 +90,7 @@ function runCloneyDryRunCommand(options) {
         command += ` --variables "${options.variables}"`;
     }
     if (options.hotReload) {
-        command += ` --hot-reload`;
+        command += " --hot-reload";
     }
     let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney Dry-Run");
     if (!terminal) {
@@ -102,4 +102,17 @@ function runCloneyDryRunCommand(options) {
     terminal.show();
 }
 exports.runCloneyDryRunCommand = runCloneyDryRunCommand;
+// Function to run Cloney 'validate' command.
+function runCloneyValidateCommand(workDir) {
+    const command = cloneyCommand(`validate "${workDir}"`);
+    let terminal = vscode.window.terminals.find((terminal) => terminal.name === "Cloney Validate");
+    if (!terminal) {
+        // If on Windows, create a new terminal with the PowerShell shell.
+        // Otherwise, create a new terminal with the default shell.
+        terminal = vscode.window.createTerminal("Cloney Validate", process.platform === "win32" ? "powershell.exe" : undefined);
+    }
+    terminal.sendText(command, true);
+    terminal.show();
+}
+exports.runCloneyValidateCommand = runCloneyValidateCommand;
 //# sourceMappingURL=cloney.js.map

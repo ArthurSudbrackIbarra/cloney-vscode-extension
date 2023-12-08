@@ -7,51 +7,70 @@ import {
   isCloneyVersionCompatible,
   runCloneyCloneCommand,
   runCloneyDryRunCommand,
+  runCloneyValidateCommand,
 } from "./cloney";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
 import { CloneyGoTemplatesCompletionProvider } from "./go-templates/completion";
 import { rmSync } from "fs";
 
+// Function to check if Cloney is installed and if the version is compatible with the extension.
+function isCloneySetUp(): boolean {
+  // Check if Cloney is installed.
+  const cloneyVersion = getCloneyVersion();
+  if (!cloneyVersion) {
+    vscode.window
+      .showErrorMessage(
+        "It appears that you do not have Cloney installed. Install it to make full use of this extension.",
+        "Install Cloney",
+        "Configure Executable Path",
+        "Dismiss"
+      )
+      .then((response) => {
+        if (response === "Install Cloney") {
+          vscode.env.openExternal(
+            vscode.Uri.parse(constants.INSTALL_CLONEY_URL)
+          );
+        } else if (response === "Configure Executable Path") {
+          vscode.commands.executeCommand(
+            "workbench.action.openSettings",
+            constants.EXTENSION_SETTINGS.cloneyExecutablePath
+          );
+        }
+      });
+    return false;
+  }
+
+  // Check if Cloney is compatible.
+  const isVersionCompatible = isCloneyVersionCompatible(
+    cloneyVersion,
+    constants.COMPATIBLE_CLONEY_MAJOR_VERSION
+  );
+  if (!isVersionCompatible) {
+    vscode.window
+      .showWarningMessage(
+        `It appears that you have Cloney "${cloneyVersion}" installed. This extension is designed to work with Cloney in versions "${constants.COMPATIBLE_CLONEY_MAJOR_VERSION}.x.x". It is *highly* recommended that you install the proper version of Cloney.`,
+        "Install Cloney",
+        "Dismiss"
+      )
+      .then((response) => {
+        if (response === "Install Cloney") {
+          vscode.env.openExternal(
+            vscode.Uri.parse(constants.INSTALL_CLONEY_URL)
+          );
+        }
+      });
+  }
+  return true;
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Cloney extension activated.");
 
-  // Check if Cloney is installed.
-  const cloneyVersion = getCloneyVersion();
-  if (!cloneyVersion) {
-    const response = await vscode.window.showErrorMessage(
-      "It appears that you do not have Cloney installed. Install it to make full use of this extension.",
-      "Install Cloney",
-      "Configure Executable Path",
-      "Dismiss"
-    );
-    if (response === "Install Cloney") {
-      vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
-    } else if (response === "Configure Executable Path") {
-      vscode.commands.executeCommand(
-        "workbench.action.openSettings",
-        constants.EXTENSION_SETTINGS.cloneyExecutablePath
-      );
-    }
-  } else {
-    // Check if Cloney is compatible.
-    const isVersionCompatible = isCloneyVersionCompatible(
-      cloneyVersion,
-      constants.COMPATIBLE_CLONEY_MAJOR_VERSION
-    );
-    if (!isVersionCompatible) {
-      const response = await vscode.window.showWarningMessage(
-        `It appears that you have Cloney "${cloneyVersion}" installed. This extension is designed to work with Cloney in versions "${constants.COMPATIBLE_CLONEY_MAJOR_VERSION}.x.x". It is *highly* recommended that you install the proper version of Cloney.`,
-        "Install Cloney",
-        "Dismiss"
-      );
-      if (response === "Install Cloney") {
-        vscode.env.openExternal(vscode.Uri.parse(constants.INSTALL_CLONEY_URL));
-      }
-    }
-  }
+  // Check if Cloney is installed and the version is compatible with the extension.
+  await isCloneySetUp();
 
   // Completion providers.
   context.subscriptions.push(
@@ -90,6 +109,11 @@ export async function activate(context: vscode.ExtensionContext) {
   // Clone.
   context.subscriptions.push(
     vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
+      // Do not run this command if Cloney is not set up.
+      if (!isCloneySetUp()) {
+        return;
+      }
+
       // Work directory.
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
       if (!workDir) {
@@ -165,6 +189,9 @@ export async function activate(context: vscode.ExtensionContext) {
           ignoreFocusOut: true,
         }
       );
+      if (!shouldSelectVariablesFile) {
+        return;
+      }
       let variablesFile: vscode.Uri[] | undefined;
       if (shouldSelectVariablesFile === "Yes") {
         variablesFile = await vscode.window.showOpenDialog({
@@ -200,6 +227,11 @@ export async function activate(context: vscode.ExtensionContext) {
   // Dry Run.
   context.subscriptions.push(
     vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
+      // Do not run this command if Cloney is not set up.
+      if (!isCloneySetUp()) {
+        return;
+      }
+
       // Work directory.
       const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
       if (!workDir) {
@@ -216,6 +248,9 @@ export async function activate(context: vscode.ExtensionContext) {
           ignoreFocusOut: true,
         }
       );
+      if (!shouldSelectVariablesFile) {
+        return;
+      }
 
       // Variables file.
       let variablesFile: vscode.Uri[] | undefined;
@@ -244,6 +279,9 @@ export async function activate(context: vscode.ExtensionContext) {
         placeHolder: "Would you like to enable hot reload?",
         ignoreFocusOut: true,
       });
+      if (!hotReload) {
+        return;
+      }
 
       // Run the command.
       runCloneyDryRunCommand({
@@ -251,6 +289,28 @@ export async function activate(context: vscode.ExtensionContext) {
         variables: variablesFile?.[0].fsPath,
         hotReload: hotReload === "Yes",
       });
+    })
+  );
+
+  // Validate.
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.VALIDATE_COMMAND, async () => {
+      // Do not run this command if Cloney is not set up.
+      if (!isCloneySetUp()) {
+        return;
+      }
+
+      // Work directory.
+      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+      if (!workDir) {
+        vscode.window.showErrorMessage(
+          "Cloney validate failed. Please open a folder first."
+        );
+        return;
+      }
+
+      // Run the command.
+      runCloneyValidateCommand(workDir);
     })
   );
 }

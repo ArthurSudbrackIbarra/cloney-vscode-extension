@@ -12,6 +12,7 @@ export const CLONEY_VARIABLES_FILE_NAME = ".cloney-vars.yaml";
 export const OPEN_DOCUMENTATION_COMMAND = "cloney.open-documentation";
 export const CLONE_COMMAND = "cloney.clone";
 export const DRY_RUN_COMMAND = "cloney.dry-run";
+export const VALIDATE_COMMAND = "cloney.validate";
 
 // Defines the URLs for Cloney documentation.
 export const INSTALL_CLONEY_URL =

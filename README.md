@@ -1,71 +1,61 @@
-# cloney README
+# Cloney
 
-This is the README for your extension "cloney". After writing up a brief description, we recommend including the following sections.
+<br>
+<p align="center">
+  <img src="images/cloney-logo-rounded.png">
+</p>
+<br>
+
+This extension provides enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.
+
+## What is Cloney?
+
+[Cloney](https://arthursudbrackibarra.github.io/cloney-documentation) is a versatile tool designed for cloning and creating dynamic template git repositories. With Cloney, you can define reusable templates with Go template syntax, making it a powerful solution for creating dynamic and adaptable projects.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Snippets and Autocompletion:**
 
-For example if there is an image subfolder under your extension project workspace:
+  - Supports .cloney.yaml metadata file.
 
-\!\[feature X\]\(images/feature-x.png\)
+    ![Metadata File Snippets](images/demo/metadata-file-snippets.png)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+  - Supports .cloney-vars variables file.
+
+    ![Variables File Snippets](images/demo/variables-file-snippets.png)
+
+  - Provides partial autocompletion for Go template syntax.
+
+    ![Go Template Autocompletion](images/demo/go-template-autocompletion.png)
+
+- **Run Cloney Commands through VSCode UI:**
+
+  - Execute Cloney commands (Clone, Dry-run, and Validate) via `F1` or `Ctrl + Shift + P`.
+
+    ![Run Cloney Commands](images/demo/run-cloney-commands.png)
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+To use this extension, you need to have [Cloney](https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney) installed on your machine. If you haven't installed Cloney yet, the extension guides you to the installation page.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- `cloney.cloneyExecutablePath`: (Optional) The absolute path to the Cloney executable.
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.0.1
 
-### 1.0.0
+- Initial release.
+- Added snippets and autocompletion for `.cloney.yaml` and `.cloney-vars` files.
+- Implemented the ability to run Cloney commands through the VSCode UI.
 
-Initial release of ...
+## Contributing
 
-### 1.0.1
+If you find any issues or have suggestions, feel free to contribute or open an issue on [GitHub](https://github.com/ArthurSudbrackIbarra/cloney-vscode-extension).
 
-Fixed issue #.
+## License
 
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+This extension is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
