@@ -1,13 +1,36 @@
 import * as vscode from "vscode";
 import { execSync } from "child_process";
+import { getUserSetting } from "./vscode";
+import { EXTENSION_SETTINGS } from "./constants";
+
+// Function to transform a command into a Cloney command.
+// If the user has set a custom path to the Cloney executable,
+// the command will be prefixed with that path.
+// Otherwise, the command will be prefixed with 'cloney'.
+function cloneyCommand(command: string): string {
+  const cloneyExecutablePath = getUserSetting<string>(
+    EXTENSION_SETTINGS.cloneyExecutablePath
+  );
+  if (cloneyExecutablePath) {
+    if (process.platform === "win32") {
+      // PowerShell requires the '&' character when the executable path is quoted.
+      return `& "${cloneyExecutablePath}" ${command}`;
+    }
+    return `"${cloneyExecutablePath}" ${command}`;
+  } else {
+    return `cloney ${command}`;
+  }
+}
 
 // Function to get the current version of Cloney.
 export function getCloneyVersion(): string | null {
-  const command = "cloney version";
   try {
     // Try to execute the 'cloney version' command.
     // If it succeeds, Cloney is installed.
-    const output = execSync(command).toString();
+    const command = cloneyCommand("version");
+    const output = execSync(command, {
+      shell: process.platform === "win32" ? "powershell.exe" : undefined,
+    }).toString();
     const versionRegex = /version ([\d\.]+)/;
     const versionMatch = versionRegex.exec(output);
     if (versionMatch) {
@@ -31,7 +54,7 @@ export interface CloneyCloneCommandOptions {
   variables?: string;
 }
 export function runCloneyCloneCommand(options: CloneyCloneCommandOptions) {
-  let command = `cloney clone "${options.repoURL}"`;
+  let command = cloneyCommand(`clone "${options.repoURL}"`);
   if (options.repoBranch) {
     command += ` --branch "${options.repoBranch}"`;
   }
@@ -43,10 +66,15 @@ export function runCloneyCloneCommand(options: CloneyCloneCommandOptions) {
     command += ` --variables "${options.variables}"`;
   }
   let terminal = vscode.window.terminals.find(
-    (terminal) => terminal.name === "Cloney clone"
+    (terminal) => terminal.name === "Cloney Clone"
   );
   if (!terminal) {
-    terminal = vscode.window.createTerminal("Cloney Clone");
+    // If on Windows, create a new terminal with the PowerShell shell.
+    // Otherwise, create a new terminal with the default shell.
+    terminal = vscode.window.createTerminal(
+      "Cloney Clone",
+      process.platform === "win32" ? "powershell.exe" : undefined
+    );
   }
   terminal.sendText(command, true);
   terminal.show();
@@ -59,7 +87,9 @@ export interface CloneyDryRunCommandOptions {
   hotReload?: boolean;
 }
 export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
-  let command = `cloney dry-run "${options.workDir}" --output "${options.workDir}/cloney-dry-run-results"`;
+  let command = cloneyCommand(
+    `dry-run "${options.workDir}" --output "${options.workDir}/cloney-dry-run-results"`
+  );
   if (options.variables) {
     command += ` --variables "${options.variables}"`;
   }
@@ -67,10 +97,15 @@ export function runCloneyDryRunCommand(options: CloneyDryRunCommandOptions) {
     command += ` --hot-reload`;
   }
   let terminal = vscode.window.terminals.find(
-    (terminal) => terminal.name === "Cloney dry-run"
+    (terminal) => terminal.name === "Cloney Dry-Run"
   );
   if (!terminal) {
-    terminal = vscode.window.createTerminal("Cloney Dry-Run");
+    // If on Windows, create a new terminal with the PowerShell shell.
+    // Otherwise, create a new terminal with the default shell.
+    terminal = vscode.window.createTerminal(
+      "Cloney Dry-Run",
+      process.platform === "win32" ? "powershell.exe" : undefined
+    );
   }
   terminal.sendText(command, true);
   terminal.show();

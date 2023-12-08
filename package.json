@@ -118,6 +118,18 @@
         "language": "cloney-variables-file",
         "path": "./snippets/cloney-variables-file-snippets.json"
       }
+    ],
+    "configuration":[
+      {
+        "title": "Cloney Extension",
+        "properties": {
+          "cloney.cloneyExecutablePath": {
+            "type": "string",
+            "default": "",
+            "description": "(Optional) The absolute path to the Cloney executable."
+          }
+        }
+      }
     ]
   },
   "scripts": {

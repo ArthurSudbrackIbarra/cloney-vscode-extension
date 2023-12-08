@@ -22,3 +22,7 @@ export async function readUserFile(fileName: string): Promise<string> {
     throw error;
   }
 }
+
+export function getUserSetting<T>(settingName: string): T | undefined {
+  return vscode.workspace.getConfiguration().get(settingName);
+}

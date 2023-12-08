@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.readUserFile = void 0;
+exports.getUserSetting = exports.readUserFile = void 0;
 const vscode = require("vscode");
 const promises_1 = require("fs/promises");
 async function readUserFile(fileName) {
@@ -23,4 +23,8 @@ async function readUserFile(fileName) {
     }
 }
 exports.readUserFile = readUserFile;
+function getUserSetting(settingName) {
+    return vscode.workspace.getConfiguration().get(settingName);
+}
+exports.getUserSetting = getUserSetting;
 //# sourceMappingURL=vscode.js.map
