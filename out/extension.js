@@ -9,6 +9,7 @@ const cloney_1 = require("./cloney");
 const completion_1 = require("./metadata-file/completion");
 const hover_1 = require("./metadata-file/hover");
 const completion_2 = require("./variables-file/completion");
+const hover_2 = require("./variables-file/hover");
 const completion_3 = require("./go-templates/completion");
 const fs_1 = require("fs");
 // Function to check if Cloney is installed and if the version is compatible with the extension.
@@ -53,6 +54,7 @@ async function activate(context) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("*", new completion_3.CloneyGoTemplatesCompletionProvider()));
     // Hover providers.
     context.subscriptions.push(vscode.languages.registerHoverProvider(constants.CLONEY_METADATA_FILE_LANGUAGE_ID, new hover_1.CloneyMetadataHoverProvider()));
+    context.subscriptions.push(vscode.languages.registerHoverProvider(constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID, new hover_2.CloneyVariablesHoverProvider()));
     // Commands.
     // Open Documentation.
     context.subscriptions.push(vscode.commands.registerCommand(constants.OPEN_DOCUMENTATION_COMMAND, () => {

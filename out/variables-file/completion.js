@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyVariablesCompletionProvider = void 0;
 const vscode = require("vscode");
 const yaml = require("js-yaml");
-const vscode_1 = require("../vscode"); // Importing readUserFile function
+const vscode_1 = require("../vscode");
 const simple_git_1 = require("simple-git");
 const fs_1 = require("fs");
 const constants_1 = require("../constants");

@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import * as yaml from "js-yaml";
-import { readUserFile } from "../vscode"; // Importing readUserFile function
+import { readUserFile } from "../vscode";
 import { simpleGit, TaskOptions } from "simple-git";
-import { tmpdir } from "os";
 import { existsSync, readFileSync } from "fs";
 import {
   CLONEY_METADATA_FILE_NAME,
@@ -40,7 +39,7 @@ export class CloneyVariablesCompletionProvider
     }
   }
 
-  private async completionItemsFromRemoteRepository(
+  public async completionItemsFromRemoteRepository(
     document: vscode.TextDocument
   ): Promise<vscode.CompletionItem[]> {
     // Get the document text.
@@ -124,7 +123,7 @@ export class CloneyVariablesCompletionProvider
     return this.completionItemsFromYAML(content, true);
   }
 
-  private completionItemsFromYAML(
+  public completionItemsFromYAML(
     content: string,
     isRemote?: boolean
   ): vscode.CompletionItem[] {
@@ -212,7 +211,7 @@ export class CloneyVariablesCompletionProvider
     return completionItems;
   }
 
-  resolveCompletionItem?(
+  public resolveCompletionItem?(
     item: vscode.CompletionItem,
     token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.CompletionItem> {

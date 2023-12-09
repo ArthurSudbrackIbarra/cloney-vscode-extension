@@ -31,7 +31,7 @@ exports.variablesItem = createFieldCompletionItem("variables", "A list of variab
 // Variable name.
 exports.variableNameItem = createFieldCompletionItem("variable.name", "The name of the variable, providing a clear identifier for users.", true, "name: ${1:variable_name} # (Required) The name of the variable, providing a clear identifier for users.");
 // Variable description.
-exports.variableDescriptionItem = createFieldCompletionItem("variable.description", "A description of the variable, providing context for users.", false, "description: ${1:variable_description} # A description of the variable, providing context for users.");
+exports.variableDescriptionItem = createFieldCompletionItem("variable.description", "A description of the variable, providing context for users.", false, "description: ${1:variable_description} # (Optional) A description of the variable, providing context for users.");
 // Variable Default.
 exports.variableDefaultItem = createFieldCompletionItem("variable.default", "The default value of a variable.", false, "default: ${1:variable_default_value} # (Optional) The default value of the variable.");
 // Variable Example.

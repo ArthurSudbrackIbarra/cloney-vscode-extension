@@ -106,7 +106,7 @@ export const variableDescriptionItem = createFieldCompletionItem(
   "variable.description",
   "A description of the variable, providing context for users.",
   false,
-  "description: ${1:variable_description} # A description of the variable, providing context for users."
+  "description: ${1:variable_description} # (Optional) A description of the variable, providing context for users."
 );
 
 // Variable Default.

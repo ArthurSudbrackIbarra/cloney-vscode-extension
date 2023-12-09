@@ -12,6 +12,7 @@ import {
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
+import { CloneyVariablesHoverProvider } from "./variables-file/hover";
 import { CloneyGoTemplatesCompletionProvider } from "./go-templates/completion";
 import { rmSync } from "fs";
 
@@ -98,6 +99,12 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerHoverProvider(
       constants.CLONEY_METADATA_FILE_LANGUAGE_ID,
       new CloneyMetadataHoverProvider()
+    )
+  );
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID,
+      new CloneyVariablesHoverProvider()
     )
   );
 
