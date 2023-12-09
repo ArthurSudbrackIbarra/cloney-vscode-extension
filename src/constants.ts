@@ -1,5 +1,8 @@
 import { tmpdir } from "os";
 
+// Defines the name of the Cloney extension.
+export const EXTENSION_NAME = "cloney";
+
 // Defines the language IDs for Cloney metadata and variables files.
 export const CLONEY_METADATA_FILE_LANGUAGE_ID = "cloney-metadata-file";
 export const CLONEY_VARIABLES_FILE_LANGUAGE_ID = "cloney-variables-file";
@@ -19,6 +22,8 @@ export const INSTALL_CLONEY_URL =
   "https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney";
 export const CLONEY_DOCUMENTATION_URL =
   "https://arthursudbrackibarra.github.io/cloney-documentation/";
+export const CLONEY_GITHUB_URL =
+  "https://github.com/ArthurSudbrackIbarra/cloney";
 
 // Defines the temporary directory for Cloney extension.
 export const CLONEY_EXTENSION_TEMP_DIR = `${tmpdir()}/cloney-vscode-extension`;

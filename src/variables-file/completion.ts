@@ -120,12 +120,19 @@ export class CloneyVariablesCompletionProvider
       return [];
     }
 
-    return this.completionItemsFromYAML(content, true);
+    return this.completionItemsFromYAML(
+      content,
+      true,
+      repositoryURL,
+      branchName || tagName
+    );
   }
 
   public completionItemsFromYAML(
     content: string,
-    isRemote?: boolean
+    isRemote?: boolean,
+    remoteRepositoryURL?: string,
+    remoteRepositoryRef?: string
   ): vscode.CompletionItem[] {
     // Parse the YAML content.
     const parsedYAML = yaml.load(content) as any;
@@ -179,6 +186,22 @@ export class CloneyVariablesCompletionProvider
       if ("example" in variable) {
         variableItem.documentation.appendMarkdown(
           `\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``
+        );
+      }
+      if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
+        // Remove '.git' from the URL.
+        let metadataFileURL = remoteRepositoryURL.slice(
+          0,
+          remoteRepositoryURL.length - 4
+        );
+        // Add the reference.
+        metadataFileURL += `/tree/${remoteRepositoryRef}/${CLONEY_METADATA_FILE_NAME}`;
+        variableItem.documentation.appendMarkdown(
+          `\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`
+        );
+      } else if (!isRemote) {
+        variableItem.documentation.appendMarkdown(
+          `\n\n**Source:** Local \`.cloney.yaml\` file.`
         );
       }
 

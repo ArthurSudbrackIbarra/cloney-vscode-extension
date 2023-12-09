@@ -108,6 +108,27 @@ export async function activate(context: vscode.ExtensionContext) {
     )
   );
 
+  // Pop-up asking for a star on GitHub if the user likes the extension.
+  // The pop-up will only appear once.
+  const globalStateKey = "HAS_CLONEY_EXECUTED";
+  const hasExecuted = context.globalState.get(globalStateKey);
+  if (!hasExecuted) {
+    vscode.window
+      .showInformationMessage(
+        `Thanks for installing the Cloney extension! If you enjoy using it, please give us a star on GitHub. Your support is much appreciated!`,
+        "Star on GitHub ⭐",
+        "Dismiss"
+      )
+      .then((response) => {
+        if (response === "Star on GitHub ⭐") {
+          vscode.env.openExternal(
+            vscode.Uri.parse(constants.CLONEY_GITHUB_URL)
+          );
+        }
+      });
+    context.globalState.update(globalStateKey, true);
+  }
+
   // Commands.
 
   // Open Documentation.

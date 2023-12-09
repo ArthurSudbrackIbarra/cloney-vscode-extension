@@ -55,6 +55,20 @@ async function activate(context) {
     // Hover providers.
     context.subscriptions.push(vscode.languages.registerHoverProvider(constants.CLONEY_METADATA_FILE_LANGUAGE_ID, new hover_1.CloneyMetadataHoverProvider()));
     context.subscriptions.push(vscode.languages.registerHoverProvider(constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID, new hover_2.CloneyVariablesHoverProvider()));
+    // Pop-up asking for a star on GitHub if the user likes the extension.
+    // The pop-up will only appear once.
+    const globalStateKey = "HAS_CLONEY_EXECUTED";
+    const hasExecuted = context.globalState.get(globalStateKey);
+    if (!hasExecuted) {
+        vscode.window
+            .showInformationMessage(`Thanks for installing the Cloney extension! If you enjoy using it, please give us a star on GitHub. Your support is much appreciated!`, "Star on GitHub ⭐", "Dismiss")
+            .then((response) => {
+            if (response === "Star on GitHub ⭐") {
+                vscode.env.openExternal(vscode.Uri.parse(constants.CLONEY_GITHUB_URL));
+            }
+        });
+        context.globalState.update(globalStateKey, true);
+    }
     // Commands.
     // Open Documentation.
     context.subscriptions.push(vscode.commands.registerCommand(constants.OPEN_DOCUMENTATION_COMMAND, () => {

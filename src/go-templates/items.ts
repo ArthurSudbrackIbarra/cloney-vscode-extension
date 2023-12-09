@@ -12,7 +12,8 @@ defineItem.documentation = new vscode.MarkdownString(
     "Later in your template, you can include or invoke this named template " +
     "using the '{{ template }}' block or the '{{ include }}' function. This " +
     "modularizes your template code, making it easier to manage and promote " +
-    "code reusability."
+    "code reusability." +
+    "\n\n[Cloney Documentation - Reusable Blocks](https://arthursudbrackibarra.github.io/cloney-documentation/creators/reusable-blocks/)"
 );
 defineItem.insertText = new vscode.SnippetString(
   '{{- define "${1:template-name}" }}\n\n{{- end }}'
@@ -42,7 +43,8 @@ const includeItem = new vscode.CompletionItem(
 includeItem.detail = "Cloney - 'include' Function";
 includeItem.documentation = new vscode.MarkdownString(
   "The **include** function allows you to import and execute another " +
-    "template, passing the results to other template functions for further processing."
+    "template, passing the results to other template functions for further processing." +
+    "\n\n[Cloney Documentation - Include Function](https://arthursudbrackibarra.github.io/cloney-documentation/creators/reusable-blocks/#the-include-function)"
 );
 includeItem.insertText = new vscode.SnippetString(
   '{{- include "${1:template-name}" ${2:data} }}'
@@ -57,7 +59,8 @@ ifItem.detail = "Cloney - 'if' Block";
 ifItem.documentation = new vscode.MarkdownString(
   "The **{{ if }}** block is used to conditionally render a block of content. " +
     "It evaluates a specified condition, and if true, it renders the enclosed " +
-    "content. If false, the content is not rendered."
+    "content. If false, the content is not rendered." +
+    "\n\n[Cloney Documentation - Conditional Statements](https://arthursudbrackibarra.github.io/cloney-documentation/creators/go-template-tutorials/conditional-statements/)"
 );
 ifItem.insertText = new vscode.SnippetString(
   "{{- if ${1:condition} }}\n\n{{- end }}"
@@ -72,7 +75,8 @@ ifElseItem.detail = "Cloney - 'if-else' Block";
 ifElseItem.documentation = new vscode.MarkdownString(
   "The **{{ if }} {{ else }}** block allows you to create an if-else statement. " +
     "If the condition in '{{ if }}' is true, the first block is rendered; " +
-    "otherwise, the '{{ else }}' block is rendered."
+    "otherwise, the '{{ else }}' block is rendered." +
+    "\n\n[Cloney Documentation - Conditional Statements](https://arthursudbrackibarra.github.io/cloney-documentation/creators/go-template-tutorials/conditional-statements/)"
 );
 ifElseItem.insertText = new vscode.SnippetString(
   "{{- if ${1:condition} }}\n\n{{- else }}\n\n{{- end }}"
@@ -87,7 +91,8 @@ ifElseIfItem.detail = "Cloney - 'if-else-if' Block";
 ifElseIfItem.documentation = new vscode.MarkdownString(
   "The **{{ if }} {{ else if }} {{ else }}** block allows you to create an " +
     "if-else if-else statement. You can evaluate multiple conditions and " +
-    "render different blocks based on the conditions."
+    "render different blocks based on the conditions." +
+    "\n\n[Cloney Documentation - Conditional Statements](https://arthursudbrackibarra.github.io/cloney-documentation/creators/go-template-tutorials/conditional-statements/)"
 );
 ifElseIfItem.insertText = new vscode.SnippetString(
   "{{- if ${1:condition} }}\n\n{{- else if ${2:condition} }}\n\n{{- else }}\n\n{{- end }}"
@@ -102,7 +107,8 @@ rangeItem.detail = "Cloney - 'range' Block";
 rangeItem.documentation = new vscode.MarkdownString(
   "The **{{ range }}** block is used to iterate over a list of items. " +
     "It takes a single argument, which is a list of items, and iterates " +
-    "over the list, rendering the block of content for each item."
+    "over the list, rendering the block of content for each item." +
+    "\n\n[Cloney Documentation - Loops and Iterations](https://arthursudbrackibarra.github.io/cloney-documentation/creators/go-template-tutorials/loops-and-iterations/)"
 );
 rangeItem.insertText = new vscode.SnippetString(
   "{{- range ${1:list} }}\n\n{{- end }}"
@@ -137,10 +143,64 @@ toFileItem.documentation = new vscode.MarkdownString(
     "- The second parameter is the name of a template containing the data that " +
     "will be written to the file.\n" +
     "- The third parameter is the template data or context that will be used " +
-    "for rendering the template."
+    "for rendering the template." +
+    "\n\n[Cloney Documentation - Dynamic File Generation](https://arthursudbrackibarra.github.io/cloney-documentation/creators/dynamic-file-generation/)"
 );
 toFileItem.insertText = new vscode.SnippetString(
   '{{- toFile "${1:file-path}" "${2:template-name}" ${3:data} -}}'
+);
+
+const osItem = new vscode.CompletionItem(
+  "{{ os }}",
+  vscode.CompletionItemKind.Function
+);
+osItem.detail = "Cloney - 'os' Function";
+osItem.documentation = new vscode.MarkdownString(
+  "The **os** function returns the user's operating system.\n\n" +
+    "[Cloney Documentation - os Function](https://arthursudbrackibarra.github.io/cloney-documentation/creators/functions/os/)"
+);
+osItem.insertText = new vscode.SnippetString("{{ $operatingSystem := os }}");
+
+// Define the 'arch' Cloney template function completion item.
+const archItem = new vscode.CompletionItem(
+  "{{ arch }}",
+  vscode.CompletionItemKind.Function
+);
+archItem.detail = "Cloney - 'arch' Function";
+archItem.documentation = new vscode.MarkdownString(
+  "The **arch** function returns the user's operating system architecture.\n\n" +
+    "[Cloney Documentation - arch Function](https://arthursudbrackibarra.github.io/cloney-documentation/creators/functions/arch/)"
+);
+archItem.insertText = new vscode.SnippetString("{{ $architecture := arch }}");
+
+// Define the 'joinDoubleQuote' Cloney template function completion item.
+const joinDoubleQuoteItem = new vscode.CompletionItem(
+  "{{ joinDoubleQuote }}",
+  vscode.CompletionItemKind.Function
+);
+joinDoubleQuoteItem.detail = "Cloney - 'joinDoubleQuote' Function";
+joinDoubleQuoteItem.documentation = new vscode.MarkdownString(
+  "The **joinDoubleQuote** function takes a list and a separator and returns a string " +
+    "with the list elements separated by the specified separator and enclosed in double quotes.\n\n" +
+    "[Cloney Documentation - joinDoubleQuote Function](https://arthursudbrackibarra.github.io/cloney-documentation/creators/functions/joinDoubleQuote/)"
+);
+joinDoubleQuoteItem.insertText = new vscode.SnippetString(
+  '{{ joinDoubleQuote ${1:list} "${2:separator}" }}'
+);
+
+// Define the 'joinSingleQuote' Cloney template function completion item.
+const joinSingleQuoteItem = new vscode.CompletionItem(
+  "{{ joinSingleQuote }}",
+  vscode.CompletionItemKind.Function
+);
+joinSingleQuoteItem.detail = "Cloney - 'joinSingleQuote' Function";
+joinSingleQuoteItem.documentation = new vscode.MarkdownString(
+  "The **joinSingleQuote** function takes a list and a separator and returns a string " +
+    "with the list elements separated by the specified separator and enclosed in single quotes.\n\n" +
+    "[Cloney Documentation - joinSingleQuote Function](https://arthursudbrackibarra.github.io/cloney-documentation/creators/functions/joinSingleQuote/)"
+);
+joinSingleQuoteItem.insertText = new vscode.SnippetString(
+  '{{ joinSingleQuote ${1:list} "${2:separator}" }}'
 );
 
 // Export all Go-template completion items.
@@ -154,4 +214,8 @@ export const goTemplateCompletionItems = [
   rangeItem,
   withItem,
   toFileItem,
+  osItem,
+  archItem,
+  joinDoubleQuoteItem,
+  joinSingleQuoteItem,
 ];

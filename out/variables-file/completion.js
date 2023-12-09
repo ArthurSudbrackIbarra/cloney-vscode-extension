@@ -101,9 +101,9 @@ class CloneyVariablesCompletionProvider {
         catch (error) {
             return [];
         }
-        return this.completionItemsFromYAML(content, true);
+        return this.completionItemsFromYAML(content, true, repositoryURL, branchName || tagName);
     }
-    completionItemsFromYAML(content, isRemote) {
+    completionItemsFromYAML(content, isRemote, remoteRepositoryURL, remoteRepositoryRef) {
         // Parse the YAML content.
         const parsedYAML = yaml.load(content);
         if (!parsedYAML || !parsedYAML.variables) {
@@ -143,6 +143,16 @@ class CloneyVariablesCompletionProvider {
             const exampleYAML = yaml.dump(variable.example);
             if ("example" in variable) {
                 variableItem.documentation.appendMarkdown(`\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``);
+            }
+            if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
+                // Remove '.git' from the URL.
+                let metadataFileURL = remoteRepositoryURL.slice(0, remoteRepositoryURL.length - 4);
+                // Add the reference.
+                metadataFileURL += `/tree/${remoteRepositoryRef}/${constants_1.CLONEY_METADATA_FILE_NAME}`;
+                variableItem.documentation.appendMarkdown(`\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`);
+            }
+            else if (!isRemote) {
+                variableItem.documentation.appendMarkdown(`\n\n**Source:** Local \`.cloney.yaml\` file.`);
             }
             // Set insert text (the text inserted when the completion item is accepted).
             let snippetStr = "";

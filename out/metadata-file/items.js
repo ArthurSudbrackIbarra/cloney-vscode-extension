@@ -6,7 +6,7 @@ const vscode = require("vscode");
 function createFieldCompletionItem(fieldName, fieldDescription, isRequired, snippet) {
     const fieldItem = new vscode.CompletionItem(fieldName, vscode.CompletionItemKind.Property);
     fieldItem.detail = `Cloney - ${fieldName}${isRequired ? " (Required)" : " (Optional)"}`;
-    fieldItem.documentation = new vscode.MarkdownString(`**${isRequired ? "Required" : "Optional"}** ${fieldDescription}`);
+    fieldItem.documentation = new vscode.MarkdownString(`**${isRequired ? "Required" : "Optional"}** ${fieldDescription}\n\n[Cloney Documentation - The Cloney Metadata File](https://arthursudbrackibarra.github.io/cloney-documentation/creators/cloney-metadata-file/)`);
     fieldItem.insertText = new vscode.SnippetString(snippet);
     return fieldItem;
 }

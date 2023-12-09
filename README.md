@@ -14,13 +14,19 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 
 ## Features
 
+- **Custom Icons:**
+
+  - Provides custom icons for `.cloney.yaml` and `.cloney-vars` files.
+
+    ![Custom Icons](images/demo/custom-icons.png)
+
 - **Snippets and Autocompletion:**
 
-  - Supports .cloney.yaml metadata file.
+  - Supports `.cloney.yaml` metadata file.
 
     ![Metadata File Snippets](images/demo/metadata-file-snippets.png)
 
-  - Supports .cloney-vars variables file.
+  - Supports `.cloney-vars` variables file.
 
     **Local Variables**:
     ![Variables File Snippets](images/demo/variables-file-snippets.png)
