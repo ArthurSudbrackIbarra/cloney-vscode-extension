@@ -1,9 +1,7 @@
 # Change Log
 
-All notable changes to the "cloney" extension will be documented in this file.
+## 0.0.1
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+- Initial release.
+- Added snippets and autocompletion for `.cloney.yaml` and `.cloney-vars` files.
+- Implemented the ability to run Cloney commands through the VSCode UI.

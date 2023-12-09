@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyMetadataHoverProvider = void 0;
 const vscode = require("vscode");
 class CloneyMetadataHoverProvider {
-    provideHover(document, position, _token) {
+    provideHover(document, position, token) {
         const range = document.getWordRangeAtPosition(position);
         const word = document.getText(range);
         const metadata = this.getHoverTextForWord(word);

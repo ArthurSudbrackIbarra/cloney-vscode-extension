@@ -1,9 +1,0 @@
-{
-  "scopeName": "source.yaml.cloney",
-  "name": "Cloney Metadata File",
-  "patterns": [
-    {
-      "include": "source.yaml"
-    }
-  ]
-}

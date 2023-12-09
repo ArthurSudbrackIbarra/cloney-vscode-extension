@@ -1,0 +1,20 @@
+{
+  "Reference Remote Repository Variables by Branch": {
+    "scope": "source.yaml.cloney-variables-file",
+    "prefix": "cloney-ref-repo-branch",
+    "body": [
+      "# (Cloney) Repository: https://${1:host}/${2:username}/${3:repository}.git",
+      "# (Cloney) Branch: ${4:main}"
+    ],
+    "description": "Reference Remote Repository Variables by Branch"
+  },
+  "Reference Remote Repository Variables by Tag": {
+    "scope": "source.yaml.cloney-variables-file",
+    "prefix": "cloney-ref-repo-tag",
+    "body": [
+      "# (Cloney) Repository: https://${1:host}/${2:username}/${3:repository}.git",
+      "# (Cloney) Tag: ${4:0.0.0}"
+    ],
+    "description": "Reference Remote Repository Variables by Tag"
+  }
+}
