@@ -69,7 +69,7 @@ class CloneyMetadataHoverProvider {
             completionItemName = `configuration.${fieldName}`;
         }
         const completionItem = (0, items_1.getItemByFieldName)(completionItemName);
-        // If the completion item is not found, return.
+        // If the completion item is not found, do not display a hover.
         if (!completionItem) {
             return undefined;
         }

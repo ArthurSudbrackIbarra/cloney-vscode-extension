@@ -33,9 +33,9 @@ class CloneyVariablesCompletionProvider {
         // Get the document text.
         const text = document.getText().toLowerCase();
         // Define regular expressions to capture repository URL, owner, name, branch, and tag.
-        const repoRegex = /# *\(cloney\) repository: *(https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\.git)/;
-        const branchRegex = /# *\(cloney\) branch: *([a-zA-Z0-9\-_]+)/;
-        const tagRegex = /# *\(cloney\) tag: *([a-zA-Z0-9\-_\.]+)/;
+        const repoRegex = /# *\(cloney\) *repository: *(https?:\/\/[^\/]+\/([^\/]+)\/([^\/]+)\.git)/;
+        const branchRegex = /# *\(cloney\) *branch: *([a-zA-Z0-9\-_]+)/;
+        const tagRegex = /# *\(cloney\) *tag: *([a-zA-Z0-9\-_\.]+)/;
         // Use exec to find the matches and capture the groups.
         const repoMatch = repoRegex.exec(text);
         if (!repoMatch || repoMatch.length < 3) {
@@ -89,6 +89,7 @@ class CloneyVariablesCompletionProvider {
                 await git.clone(repositoryURL, tempDir, cloneOptions);
             }
             catch (error) {
+                vscode.window.showErrorMessage(`Cloney: Could not clone repository "${repositoryName}". Please ensure that the repository reference is valid, the repository is public, and that you have [Git](https://git-scm.com/) installed on your system.`);
                 return [];
             }
         }

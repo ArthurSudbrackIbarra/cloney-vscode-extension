@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.COMPATIBLE_CLONEY_MAJOR_VERSION = exports.EXTENSION_SETTINGS = exports.CLONEY_EXTENSION_TEMP_DIR = exports.CLONEY_GITHUB_URL = exports.CLONEY_DOCUMENTATION_URL = exports.INSTALL_CLONEY_URL = exports.VALIDATE_COMMAND = exports.DRY_RUN_COMMAND = exports.CLONE_COMMAND = exports.OPEN_DOCUMENTATION_COMMAND = exports.CLONEY_VARIABLES_FILE_NAME = exports.CLONEY_METADATA_FILE_NAME = exports.CLONEY_VARIABLES_FILE_LANGUAGE_ID = exports.CLONEY_METADATA_FILE_LANGUAGE_ID = exports.EXTENSION_NAME = void 0;
+exports.COMPATIBLE_CLONEY_MAJOR_VERSION = exports.EXTENSION_SETTINGS = exports.CLONEY_EXTENSION_TEMP_DIR = exports.CLONEY_GITHUB_URL = exports.CLONEY_DOCUMENTATION_URL = exports.INSTALL_CLONEY_URL = exports.GLOBAL_STATE_KEYS = exports.VALIDATE_COMMAND = exports.DRY_RUN_COMMAND = exports.CLONE_COMMAND = exports.OPEN_DOCUMENTATION_COMMAND = exports.CLONEY_VARIABLES_FILE_NAME = exports.CLONEY_METADATA_FILE_NAME = exports.CLONEY_VARIABLES_FILE_LANGUAGE_ID = exports.CLONEY_METADATA_FILE_LANGUAGE_ID = exports.EXTENSION_NAME = void 0;
 const os_1 = require("os");
 // Defines the name of the Cloney extension.
 exports.EXTENSION_NAME = "cloney";
@@ -15,6 +15,11 @@ exports.OPEN_DOCUMENTATION_COMMAND = "cloney.open-documentation";
 exports.CLONE_COMMAND = "cloney.clone";
 exports.DRY_RUN_COMMAND = "cloney.dry-run";
 exports.VALIDATE_COMMAND = "cloney.validate";
+// Defines the global state keys for Cloney extension.
+exports.GLOBAL_STATE_KEYS = {
+    lastStarPopUpTime: "cloney.lastStarPopUpTime",
+    stopRemindingToStar: "cloney.stopRemindingToStar",
+};
 // Defines the URLs for Cloney documentation.
 exports.INSTALL_CLONEY_URL = "https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney";
 exports.CLONEY_DOCUMENTATION_URL = "https://arthursudbrackibarra.github.io/cloney-documentation/";

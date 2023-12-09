@@ -108,25 +108,45 @@ export async function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  // Pop-up asking for a star on GitHub if the user likes the extension.
-  // The pop-up will only appear once.
-  const globalStateKey = "HAS_CLONEY_EXECUTED";
-  const hasExecuted = context.globalState.get(globalStateKey);
-  if (!hasExecuted) {
-    vscode.window
-      .showInformationMessage(
-        `Thanks for installing the Cloney extension! If you enjoy using it, please give us a star on GitHub. Your support is much appreciated!`,
-        "Star on GitHub ⭐",
-        "Dismiss"
-      )
-      .then((response) => {
-        if (response === "Star on GitHub ⭐") {
-          vscode.env.openExternal(
-            vscode.Uri.parse(constants.CLONEY_GITHUB_URL)
-          );
-        }
-      });
-    context.globalState.update(globalStateKey, true);
+  // Eventual pop-up asking for a star on GitHub.
+  // The pop-up will appear once every 60 days.
+  const stopRemindingToStar = context.globalState.get(
+    constants.GLOBAL_STATE_KEYS.stopRemindingToStar
+  );
+  if (!stopRemindingToStar) {
+    const lastStarPopUpTime = context.globalState.get<number>(
+      constants.GLOBAL_STATE_KEYS.lastStarPopUpTime
+    );
+    const currentTime = new Date().getTime();
+    const sixtyDays = 1000 * 60 * 60 * 24 * 60;
+    if (!lastStarPopUpTime || currentTime - lastStarPopUpTime >= sixtyDays) {
+      vscode.window
+        .showInformationMessage(
+          `Thank you for using the Cloney extension! If you find it helpful, consider giving us a star on GitHub. Your support is very much appreciated!`,
+          "Star on GitHub ⭐",
+          "Stop Reminding",
+          "Dismiss"
+        )
+        .then((response) => {
+          if (response === "Star on GitHub ⭐") {
+            vscode.env.openExternal(
+              vscode.Uri.parse(constants.CLONEY_GITHUB_URL)
+            );
+          } else if (response === "Stop Reminding") {
+            // If the user chooses to stop reminding, update the global state.
+            // This will prevent the pop-up from appearing again.
+            context.globalState.update(
+              constants.GLOBAL_STATE_KEYS.stopRemindingToStar,
+              true
+            );
+          }
+        });
+      // Update the last pop-up time.
+      context.globalState.update(
+        constants.GLOBAL_STATE_KEYS.lastStarPopUpTime,
+        currentTime
+      );
+    }
   }
 
   // Commands.

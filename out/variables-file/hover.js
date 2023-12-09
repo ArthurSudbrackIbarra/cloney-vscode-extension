@@ -45,6 +45,9 @@ class CloneyVariablesHoverProvider {
                 // Return the completion item's documentation as a hover.
                 return new vscode.Hover(completionItem.documentation);
             }
+            else {
+                return new vscode.Hover(new vscode.MarkdownString(`Undefined Cloney variable: \`${fieldName}\`. In order to use this variable, you need to define it in your Cloney metadata file.`));
+            }
         }
         catch (error) {
             return undefined;

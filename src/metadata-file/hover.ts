@@ -73,7 +73,7 @@ export class CloneyMetadataHoverProvider implements vscode.HoverProvider {
     }
     const completionItem = getItemByFieldName(completionItemName);
 
-    // If the completion item is not found, return.
+    // If the completion item is not found, do not display a hover.
     if (!completionItem) {
       return undefined;
     }

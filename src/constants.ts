@@ -17,6 +17,12 @@ export const CLONE_COMMAND = "cloney.clone";
 export const DRY_RUN_COMMAND = "cloney.dry-run";
 export const VALIDATE_COMMAND = "cloney.validate";
 
+// Defines the global state keys for Cloney extension.
+export const GLOBAL_STATE_KEYS = {
+  lastStarPopUpTime: "cloney.lastStarPopUpTime",
+  stopRemindingToStar: "cloney.stopRemindingToStar",
+};
+
 // Defines the URLs for Cloney documentation.
 export const INSTALL_CLONEY_URL =
   "https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney";
