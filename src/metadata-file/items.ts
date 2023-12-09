@@ -22,7 +22,7 @@ function createFieldCompletionItem(
 }
 
 // Manifest Version.
-const manifestVersionItem = createFieldCompletionItem(
+export const manifestVersionItem = createFieldCompletionItem(
   "manifest_version",
   "The version of this Cloney manifest file, ensuring compatibility with different versions of Cloney.",
   true,
@@ -30,7 +30,7 @@ const manifestVersionItem = createFieldCompletionItem(
 );
 
 // Name.
-const nameItem = createFieldCompletionItem(
+export const nameItem = createFieldCompletionItem(
   "name",
   "The name of your Cloney template, providing a clear identifier for users.",
   true,
@@ -38,7 +38,7 @@ const nameItem = createFieldCompletionItem(
 );
 
 // Description.
-const descriptionItem = createFieldCompletionItem(
+export const descriptionItem = createFieldCompletionItem(
   "description",
   "A brief but informative description of your Cloney template.",
   false,
@@ -46,15 +46,23 @@ const descriptionItem = createFieldCompletionItem(
 );
 
 // Template Version.
-const templateVersionItem = createFieldCompletionItem(
+export const templateVersionItem = createFieldCompletionItem(
   "template_version",
   "The version number of your template. Update it as you make new changes to your template.",
   true,
   '# (Optional) The version number of your template. Update it as you make new changes to your template.\ntemplate_version: ${1:"0.1.0"}'
 );
 
+// License.
+export const licenseItem = createFieldCompletionItem(
+  "license",
+  "The licensing information for your template, specifying how others can use and distribute it.",
+  false,
+  "# (Optional) The license under which your template is distributed.\nlicense: ${1:MIT}"
+);
+
 // Authors.
-const authorsItem = createFieldCompletionItem(
+export const authorsItem = createFieldCompletionItem(
   "authors",
   "A list of contributors or creators of the template, acknowledging their role in its development.",
   false,
@@ -62,7 +70,7 @@ const authorsItem = createFieldCompletionItem(
 );
 
 // Configuration.
-const configurationItem = createFieldCompletionItem(
+export const configurationItem = createFieldCompletionItem(
   "configuration",
   "A list of configuration options for your template, allowing users to customize their experience.",
   false,
@@ -70,7 +78,7 @@ const configurationItem = createFieldCompletionItem(
 );
 
 // Ignore Paths.
-const ignorePathsItem = createFieldCompletionItem(
+export const ignorePathsItem = createFieldCompletionItem(
   "configuration.ignore_paths",
   "A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process.",
   false,
@@ -78,7 +86,7 @@ const ignorePathsItem = createFieldCompletionItem(
 );
 
 // Variables.
-const variablesItem = createFieldCompletionItem(
+export const variablesItem = createFieldCompletionItem(
   "variables",
   "A list of variables that users can customize during the cloning process.",
   false,
@@ -86,7 +94,7 @@ const variablesItem = createFieldCompletionItem(
 );
 
 // Variable name.
-const variableNameItem = createFieldCompletionItem(
+export const variableNameItem = createFieldCompletionItem(
   "variable.name",
   "The name of the variable, providing a clear identifier for users.",
   true,
@@ -94,7 +102,7 @@ const variableNameItem = createFieldCompletionItem(
 );
 
 // Variable description.
-const variableDescriptionItem = createFieldCompletionItem(
+export const variableDescriptionItem = createFieldCompletionItem(
   "variable.description",
   "A description of the variable, providing context for users.",
   false,
@@ -102,7 +110,7 @@ const variableDescriptionItem = createFieldCompletionItem(
 );
 
 // Variable Default.
-const variableDefaultItem = createFieldCompletionItem(
+export const variableDefaultItem = createFieldCompletionItem(
   "variable.default",
   "The default value of a variable.",
   false,
@@ -110,7 +118,7 @@ const variableDefaultItem = createFieldCompletionItem(
 );
 
 // Variable Example.
-const variableExampleItem = createFieldCompletionItem(
+export const variableExampleItem = createFieldCompletionItem(
   "variable.example",
   "An example value of the variable.",
   true,
@@ -123,6 +131,7 @@ export const metadataFileCompletionItems = [
   nameItem,
   descriptionItem,
   templateVersionItem,
+  licenseItem,
   authorsItem,
   configurationItem,
   ignorePathsItem,
@@ -132,3 +141,10 @@ export const metadataFileCompletionItems = [
   variableDefaultItem,
   variableExampleItem,
 ];
+
+// Function to get a completion item by its field name.
+export function getItemByFieldName(
+  fieldName: string
+): vscode.CompletionItem | undefined {
+  return metadataFileCompletionItems.find((item) => item.label === fieldName);
+}

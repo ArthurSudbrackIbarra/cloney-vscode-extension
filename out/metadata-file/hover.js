@@ -2,34 +2,79 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyMetadataHoverProvider = void 0;
 const vscode = require("vscode");
+const items_1 = require("./items");
+// Defines a hover provider for Cloney Metadata files.
 class CloneyMetadataHoverProvider {
+    // Provides a hover for Cloney Metadata files.
     provideHover(document, position, token) {
-        const range = document.getWordRangeAtPosition(position);
-        const word = document.getText(range);
-        const metadata = this.getHoverTextForWord(word);
-        if (metadata) {
-            return new vscode.Hover(metadata);
+        // Check if the line content is a field, if not, return.
+        const lineContent = document.lineAt(position.line).text;
+        const fieldRegex = /^[\s\t]*-?[\s\t]*([a-z_]+):/;
+        const fieldMatch = fieldRegex.exec(lineContent);
+        if (!fieldMatch) {
+            return undefined;
         }
-    }
-    getHoverTextForWord(word) {
-        switch (word) {
-            case "manifest_version":
-                return "The version of this Cloney manifest file, ensuring compatibility with different versions of Cloney.";
-            case "name":
-                return "The name of your template, providing a clear identifier for users.";
-            case "description":
-                return "A brief but informative description of your template's purpose and functionality.";
-            case "template_version":
-                "The version number of your template. Update it as you make new changes to your template.";
-            case "authors":
-                return "A list of contributors or creators of the template, acknowledging their role in its development.";
-            case "configuration":
-                return "A list of configuration options for your template, allowing users to customize their experience.";
-            case "ignore_paths":
-                return "A list of paths to ignore when cloning the template. This is useful for excluding files that are not relevant to the template's customization process.";
-            case "variables":
-                return "A list of variables that users can customize during the cloning process.";
+        // Check if the field is a nested field of 'variables' or 'configuration'.
+        // Fields inside the 'variables' property can have the same name as root-level fields.
+        // Therefore, we need to check which one is being hovered.
+        const fieldName = fieldMatch[1];
+        const nestedFieldRegex = /^[\s\t]+-?[\s\t]*([a-z_]+):/;
+        let isVariablesNested = false;
+        const nestedVariablesFields = ["name", "description", "default", "example"];
+        let isConfigurationNested = false;
+        const nestedConfigurationFields = ["ignore_paths"];
+        if (nestedVariablesFields.includes(fieldName)) {
+            // Search in previous lines for the 'variables' field.
+            let skipLineSearch = false;
+            if (!nestedFieldRegex.exec(lineContent)) {
+                isVariablesNested = false;
+                skipLineSearch = true;
+            }
+            if (!skipLineSearch) {
+                for (let i = position.line; i >= 0; i--) {
+                    const lineContent = document.lineAt(i).text;
+                    if (lineContent.startsWith("variables:")) {
+                        isVariablesNested = true;
+                        break;
+                    }
+                }
+            }
         }
+        else if (nestedConfigurationFields.includes(fieldName)) {
+            // Search in previous lines for the 'configuration' field.
+            let skipLineSearch = false;
+            if (!nestedFieldRegex.exec(lineContent)) {
+                isConfigurationNested = false;
+                skipLineSearch = true;
+            }
+            if (!skipLineSearch) {
+                for (let i = position.line; i >= 0; i--) {
+                    const lineContent = document.lineAt(i).text;
+                    if (lineContent.startsWith("configuration:")) {
+                        isConfigurationNested = true;
+                        break;
+                    }
+                }
+            }
+        }
+        // ! KNOWN ISSUE: Properties inside variables.default (map) and variables.example (map) will be considered
+        // as a nested field of 'variables'. This is because the regex used to check if a field is nested
+        // is not able to differentiate between a nested field and a map property.
+        // Get the completion item for the field.
+        let completionItemName = fieldName;
+        if (isVariablesNested) {
+            completionItemName = `variable.${fieldName}`;
+        }
+        else if (isConfigurationNested) {
+            completionItemName = `configuration.${fieldName}`;
+        }
+        const completionItem = (0, items_1.getItemByFieldName)(completionItemName);
+        // If the completion item is not found, return.
+        if (!completionItem) {
+            return undefined;
+        }
+        // Return the hover.
+        return new vscode.Hover(completionItem.documentation);
     }
 }
 exports.CloneyMetadataHoverProvider = CloneyMetadataHoverProvider;

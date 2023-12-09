@@ -7,6 +7,7 @@ const vscode = require("vscode");
 const constants = require("./constants");
 const cloney_1 = require("./cloney");
 const completion_1 = require("./metadata-file/completion");
+const hover_1 = require("./metadata-file/hover");
 const completion_2 = require("./variables-file/completion");
 const completion_3 = require("./go-templates/completion");
 const fs_1 = require("fs");
@@ -50,6 +51,8 @@ async function activate(context) {
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(constants.CLONEY_METADATA_FILE_LANGUAGE_ID, new completion_1.CloneyMetadataCompletionProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider(constants.CLONEY_VARIABLES_FILE_LANGUAGE_ID, new completion_2.CloneyVariablesCompletionProvider()));
     context.subscriptions.push(vscode.languages.registerCompletionItemProvider("*", new completion_3.CloneyGoTemplatesCompletionProvider()));
+    // Hover providers.
+    context.subscriptions.push(vscode.languages.registerHoverProvider(constants.CLONEY_METADATA_FILE_LANGUAGE_ID, new hover_1.CloneyMetadataHoverProvider()));
     // Commands.
     // Open Documentation.
     context.subscriptions.push(vscode.commands.registerCommand(constants.OPEN_DOCUMENTATION_COMMAND, () => {

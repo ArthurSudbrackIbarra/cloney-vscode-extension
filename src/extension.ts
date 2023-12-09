@@ -10,6 +10,7 @@ import {
   runCloneyValidateCommand,
 } from "./cloney";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
+import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
 import { CloneyGoTemplatesCompletionProvider } from "./go-templates/completion";
 import { rmSync } from "fs";
@@ -89,6 +90,14 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCompletionItemProvider(
       "*",
       new CloneyGoTemplatesCompletionProvider()
+    )
+  );
+
+  // Hover providers.
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      constants.CLONEY_METADATA_FILE_LANGUAGE_ID,
+      new CloneyMetadataHoverProvider()
     )
   );
 
