@@ -4,7 +4,7 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 
 <br>
 <p align="center">
-  <img src="images/cloney-logo-rounded.png" width="200px">
+  <img src="images/cloney-logo-rounded.png" width="350px">
 </p>
 <br>
 
@@ -63,6 +63,10 @@ This extension contributes the following settings:
 - Initial release.
 - Added snippets and autocompletion for `.cloney.yaml` and `.cloney-vars` files.
 - Implemented the ability to run Cloney commands through the VSCode UI.
+
+### 0.0.2
+
+- Fixed a dependency error that was preventing the extension from working.
 
 ## Contributing
 
