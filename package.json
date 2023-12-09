@@ -2,11 +2,12 @@
   "name": "cloney",
   "displayName": "Cloney",
   "description": "Enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "./images/cloney-logo-rounded.png",
   "author": {
     "name": "Arthur Sudbrack Ibarra"
   },
+  "publisher": "ArthurSudbrackIbarra",
   "homepage": "https://arthursudbrackibarra.github.io/cloney-documentation/",
   "license": "MIT",
   "repository": {
@@ -147,6 +148,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "js-yaml": "^4.1.0",
     "simple-git": "^3.20.0"
   }
 }
