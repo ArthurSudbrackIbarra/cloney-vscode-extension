@@ -1,12 +1,12 @@
 # Cloney
 
+This extension provides enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.
+
 <br>
 <p align="center">
-  <img src="images/cloney-logo-rounded.png">
+  <img src="images/cloney-logo-rounded.png" width="200px">
 </p>
 <br>
-
-This extension provides enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.
 
 ## What is Cloney?
 
@@ -46,7 +46,9 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 
 ## Requirements
 
-To use this extension, you need to have [Cloney](https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney) installed on your machine. If you haven't installed Cloney yet, the extension guides you to the installation page.
+1. To use this extension, you need to have [Cloney](https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney) installed on your machine. If you haven't installed Cloney yet, the extension guides you to the installation page.
+
+1. For the remote variables feature, you also need to have [Git](https://git-scm.com/downloads) installed on your machine.
 
 ## Extension Settings
 

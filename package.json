@@ -13,11 +13,21 @@
     "url": "https://github.com/ArthurSudbrackIbarra/cloney-vscode-extension",
     "type": "git"
   },
+  "bugs": {
+    "url": "https://github.com/ArthurSudbrackIbarra/cloney-vscode-extension/issues"
+  },
   "engines": {
     "vscode": "^1.83.0"
   },
   "categories": [
-    "Snippets"
+    "Snippets",
+    "Language Packs",
+    "Other"
+  ],
+  "keywords": [
+    "Cloney",
+    "Go Template",
+    "Templates"
   ],
   "main": "./out/extension.js",
   "activationEvents": [
