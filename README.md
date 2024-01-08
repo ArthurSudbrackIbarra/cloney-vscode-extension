@@ -56,18 +56,6 @@ This extension contributes the following settings:
 
 - `cloney.cloneyExecutablePath`: (Optional) The absolute path to the Cloney executable.
 
-## Release Notes
-
-### 0.0.1
-
-- Initial release.
-- Added snippets and autocompletion for `.cloney.yaml` and `.cloney-vars` files.
-- Implemented the ability to run Cloney commands through the VSCode UI.
-
-### 0.0.2
-
-- Fixed a dependency error that was preventing the extension from working.
-
 ## Contributing
 
 If you find any issues or have suggestions, feel free to contribute or open an issue on [GitHub](https://github.com/ArthurSudbrackIbarra/cloney-vscode-extension).
