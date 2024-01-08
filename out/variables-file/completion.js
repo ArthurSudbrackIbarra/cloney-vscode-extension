@@ -146,11 +146,7 @@ class CloneyVariablesCompletionProvider {
                 variableItem.documentation.appendMarkdown(`\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``);
             }
             if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
-                // Remove '.git' from the URL.
-                let metadataFileURL = remoteRepositoryURL.slice(0, remoteRepositoryURL.length - 4);
-                // Add the reference.
-                metadataFileURL += `/tree/${remoteRepositoryRef}/${constants_1.CLONEY_METADATA_FILE_NAME}`;
-                variableItem.documentation.appendMarkdown(`\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`);
+                variableItem.documentation.appendMarkdown(`\n\n**Source:** Remote repository \`${remoteRepositoryURL}\` (branch/tag: \`${remoteRepositoryRef}\`).`);
             }
             else if (!isRemote) {
                 variableItem.documentation.appendMarkdown(`\n\n**Source:** Local \`.cloney.yaml\` file.`);

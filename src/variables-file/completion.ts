@@ -192,15 +192,8 @@ export class CloneyVariablesCompletionProvider
         );
       }
       if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
-        // Remove '.git' from the URL.
-        let metadataFileURL = remoteRepositoryURL.slice(
-          0,
-          remoteRepositoryURL.length - 4
-        );
-        // Add the reference.
-        metadataFileURL += `/tree/${remoteRepositoryRef}/${CLONEY_METADATA_FILE_NAME}`;
         variableItem.documentation.appendMarkdown(
-          `\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`
+          `\n\n**Source:** Remote repository \`${remoteRepositoryURL}\` (branch/tag: \`${remoteRepositoryRef}\`).`
         );
       } else if (!isRemote) {
         variableItem.documentation.appendMarkdown(

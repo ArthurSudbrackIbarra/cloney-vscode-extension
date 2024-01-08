@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getItemByFieldName = exports.metadataFileCompletionItems = exports.variableExampleItem = exports.variableDefaultItem = exports.variableDescriptionItem = exports.variableNameItem = exports.variablesItem = exports.ignorePathsItem = exports.configurationItem = exports.authorsItem = exports.licenseItem = exports.templateVersionItem = exports.descriptionItem = exports.nameItem = exports.manifestVersionItem = void 0;
+exports.getItemByFieldName = exports.metadataFileCompletionItems = exports.variableValidateItem = exports.variableExampleItem = exports.variableDefaultItem = exports.variableDescriptionItem = exports.variableNameItem = exports.variablesItem = exports.ignorePathsItem = exports.configurationItem = exports.authorsItem = exports.licenseItem = exports.templateVersionItem = exports.descriptionItem = exports.nameItem = exports.manifestVersionItem = void 0;
 const vscode = require("vscode");
 // Common function to create a completion item for a field with comments.
 function createFieldCompletionItem(fieldName, fieldDescription, isRequired, snippet) {
@@ -36,6 +36,8 @@ exports.variableDescriptionItem = createFieldCompletionItem("variable.descriptio
 exports.variableDefaultItem = createFieldCompletionItem("variable.default", "The default value of a variable.", false, "default: ${1:variable_default_value} # (Optional) The default value of the variable.");
 // Variable Example.
 exports.variableExampleItem = createFieldCompletionItem("variable.example", "An example value of the variable.", true, "example: ${1:variable_example_value} # (Required) An example value of the variable.");
+// Variable Validate.
+exports.variableValidateItem = createFieldCompletionItem("variable.validate", "This parameter determines whether the variable's value should undergo validation when it is cloned. By default, this setting is enabled (`true`). Although not recommended, you have the option to disable validation by setting this field to `false`. Disabling validation can be particularly beneficial for variables with dynamic characteristics, such as variables that may assume various types or maps with dynamically changing keys.", false, "validate: ${1:true} # (Optional) Enable or disable validation for the variable's value.");
 // Export fields.
 exports.metadataFileCompletionItems = [
     exports.manifestVersionItem,
@@ -51,6 +53,7 @@ exports.metadataFileCompletionItems = [
     exports.variableDescriptionItem,
     exports.variableDefaultItem,
     exports.variableExampleItem,
+    exports.variableValidateItem,
 ];
 // Function to get a completion item by its field name.
 function getItemByFieldName(fieldName) {
