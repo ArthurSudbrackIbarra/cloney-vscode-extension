@@ -127,6 +127,14 @@ export const variableExampleItem = createFieldCompletionItem(
   "example: ${1:variable_example_value} # (Required) An example value of the variable."
 );
 
+// Variable Validate.
+export const variableValidateItem = createFieldCompletionItem(
+  "variable.validate",
+  "This parameter determines whether the variable's value should undergo validation when it is cloned. By default, this setting is enabled (`true`). Although not recommended, you have the option to disable validation by setting this field to `false`. Disabling validation can be particularly beneficial for variables with dynamic characteristics, such as variables that may assume various types or maps with dynamically changing keys.",
+  false,
+  "validate: ${1:true} # (Optional) Enable or disable validation for the variable's value."
+);
+
 // Export fields.
 export const metadataFileCompletionItems = [
   manifestVersionItem,
@@ -142,6 +150,7 @@ export const metadataFileCompletionItems = [
   variableDescriptionItem,
   variableDefaultItem,
   variableExampleItem,
+  variableValidateItem,
 ];
 
 // Function to get a completion item by its field name.

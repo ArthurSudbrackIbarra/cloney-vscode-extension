@@ -15,6 +15,7 @@ export const CLONEY_VARIABLES_FILE_NAME = ".cloney-vars.yaml";
 export const OPEN_DOCUMENTATION_COMMAND = "cloney.open-documentation";
 export const CLONE_COMMAND = "cloney.clone";
 export const DRY_RUN_COMMAND = "cloney.dry-run";
+export const START_COMMAND = "cloney.start";
 export const VALIDATE_COMMAND = "cloney.validate";
 
 // Defines the global state keys for Cloney extension.

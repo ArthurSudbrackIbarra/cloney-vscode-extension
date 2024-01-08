@@ -5,6 +5,7 @@ import * as constants from "./constants";
 import {
   getCloneyVersion,
   isCloneyVersionCompatible,
+  runCloneyStartCommand,
   runCloneyCloneCommand,
   runCloneyDryRunCommand,
   runCloneyValidateCommand,
@@ -72,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext) {
   console.log("Cloney extension activated.");
 
   // Check if Cloney is installed and the version is compatible with the extension.
-  await isCloneySetUp();
+  isCloneySetUp();
 
   // Completion providers.
   context.subscriptions.push(
@@ -161,6 +162,82 @@ export async function activate(context: vscode.ExtensionContext) {
         );
       }
     )
+  );
+
+  // Start.
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.START_COMMAND, async () => {
+      // Do not run this command if Cloney is not set up.
+      if (!isCloneySetUp()) {
+        return;
+      }
+
+      // Work directory.
+      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+      if (!workDir) {
+        vscode.window.showErrorMessage(
+          "Cloney start failed. Please open a folder first."
+        );
+        return;
+      }
+
+      // Name.
+      const name = await vscode.window.showInputBox({
+        title: "Template Repository Name",
+        prompt: "Enter the name of the template repository",
+        placeHolder: "my-cloney-template",
+        ignoreFocusOut: true,
+      });
+      if (!name) {
+        return;
+      }
+
+      // Description.
+      const description = await vscode.window.showInputBox({
+        title: "Template Repository Description",
+        prompt: "Enter the description of the template repository",
+        placeHolder: "My Cloney Template",
+        ignoreFocusOut: true,
+      });
+      if (!description) {
+        return;
+      }
+
+      // Authors.
+      const authorsStr = await vscode.window.showInputBox({
+        title: "Template Repository Authors",
+        prompt:
+          "Enter the authors of the template repository (comma-separated)",
+        placeHolder: "John Doe, Michael Doe",
+        ignoreFocusOut: true,
+      });
+      if (!authorsStr) {
+        return;
+      }
+      const authors = authorsStr.split(",").map((author) => author.trim());
+
+      // License.
+      const license = await vscode.window.showInputBox({
+        title: "Template Repository License",
+        prompt: "Enter the license of the template repository",
+        placeHolder: "MIT",
+        value: "MIT",
+        ignoreFocusOut: true,
+      });
+      if (!license) {
+        return;
+      }
+
+      // Run the command.
+      runCloneyStartCommand({
+        workDir,
+        authors,
+        description,
+        license,
+        name,
+        outputDirName: name,
+      });
+    })
   );
 
   // Clone.
