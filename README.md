@@ -55,6 +55,7 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 This extension contributes the following settings:
 
 - `cloney.cloneyExecutablePath`: (Optional) The absolute path to the Cloney executable.
+- `cloney.enableGoTemplatesSuggestions`: Whether or not to enable Go Templates suggestions when a Cloney metadata file (`.cloney.yaml`) is present.
 
 ## Contributing
 

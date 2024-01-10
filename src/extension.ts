@@ -10,7 +10,7 @@ import {
   runCloneyDryRunCommand,
   runCloneyValidateCommand,
 } from "./cloney";
-import { getCurrentFileDirectory } from "./vscode";
+import { getWorkspaceFolderPath, getCurrentFileDirectory } from "./vscode";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
@@ -174,26 +174,28 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Work directory.
-      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-      if (!workDir) {
+      // Workspace folder.
+      let workspaceFolder = "";
+      try {
+        workspaceFolder = getWorkspaceFolderPath();
+      } catch (error) {
         vscode.window.showErrorMessage(
           "Cloney start failed. Please open a folder first."
         );
         return;
       }
 
-      // If the current directory is not the workspace root, ask the user if they want
-      // to run the command from the current directory or from the workspace root.
+      // If the current directory is not the workspace folder, ask the user if they want
+      // to run the command in the current directory or in the workspace folder.
       let currentDirectory = "";
       try {
         currentDirectory = getCurrentFileDirectory();
       } catch (error) {}
       let runFromWorkspaceRoot: string | undefined;
-      if (currentDirectory && currentDirectory !== workDir) {
+      if (currentDirectory && currentDirectory !== workspaceFolder) {
         runFromWorkspaceRoot = await vscode.window.showQuickPick(
           [
-            `Workspace Root (${basename(workDir)})`,
+            `Workspace Root (${basename(workspaceFolder)})`,
             `Current Directory (${basename(currentDirectory)})`,
           ],
           {
@@ -255,8 +257,9 @@ export async function activate(context: vscode.ExtensionContext) {
       // Run the command.
       runCloneyStartCommand({
         workDir:
-          runFromWorkspaceRoot === `Workspace Root (${basename(workDir)})`
-            ? workDir
+          runFromWorkspaceRoot ===
+          `Workspace Root (${basename(workspaceFolder)})`
+            ? workspaceFolder
             : currentDirectory,
         authors,
         description,
@@ -275,11 +278,13 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Work directory.
-      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-      if (!workDir) {
+      // Workspace folder.
+      let workspaceFolder = "";
+      try {
+        workspaceFolder = getWorkspaceFolderPath();
+      } catch (error) {
         vscode.window.showErrorMessage(
-          "Cloney clone failed. Please open a folder first."
+          "Cloney start failed. Please open a folder first."
         );
         return;
       }
@@ -358,7 +363,7 @@ export async function activate(context: vscode.ExtensionContext) {
         variablesFile = await vscode.window.showOpenDialog({
           title: "Variables File",
           defaultUri: vscode.Uri.file(
-            `${workDir}/${constants.CLONEY_VARIABLES_FILE_NAME}`
+            `${workspaceFolder}/${constants.CLONEY_VARIABLES_FILE_NAME}`
           ),
           canSelectFiles: true,
           canSelectFolders: false,
@@ -375,7 +380,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Run the command.
       runCloneyCloneCommand({
-        workDir,
+        workDir: workspaceFolder,
         repoURL,
         repoBranch,
         repoTag,
@@ -393,11 +398,13 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Work directory.
-      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-      if (!workDir) {
+      // Workspace folder.
+      let workspaceFolder = "";
+      try {
+        workspaceFolder = getWorkspaceFolderPath();
+      } catch (error) {
         vscode.window.showErrorMessage(
-          "Cloney dry-run failed. Please open a folder first."
+          "Cloney start failed. Please open a folder first."
         );
         return;
       }
@@ -408,7 +415,7 @@ export async function activate(context: vscode.ExtensionContext) {
         {
           title: "Directory Selection",
           placeHolder: `The \"cloney dry-run\" command will be run in your workspace directory (${basename(
-            workDir
+            workspaceFolder
           )}). Is this OK or would you like to select another directory?`,
           ignoreFocusOut: true,
         }
@@ -420,7 +427,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (shouldSelectCommandDirectory === "Select Another Directory") {
         commandDirectory = await vscode.window.showOpenDialog({
           title: "Dry-Run Directory",
-          defaultUri: vscode.Uri.file(workDir),
+          defaultUri: vscode.Uri.file(workspaceFolder),
           canSelectFiles: false,
           canSelectFolders: true,
           canSelectMany: false,
@@ -448,9 +455,9 @@ export async function activate(context: vscode.ExtensionContext) {
         variablesFile = await vscode.window.showOpenDialog({
           title: "Variables File",
           defaultUri: vscode.Uri.file(
-            `${commandDirectory ? commandDirectory[0].fsPath : workDir}/${
-              constants.CLONEY_VARIABLES_FILE_NAME
-            }`
+            `${
+              commandDirectory ? commandDirectory[0].fsPath : workspaceFolder
+            }/${constants.CLONEY_VARIABLES_FILE_NAME}`
           ),
           canSelectFiles: true,
           canSelectFolders: false,
@@ -477,7 +484,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Run the command.
       runCloneyDryRunCommand({
-        workDir: commandDirectory?.[0].fsPath || workDir,
+        workDir: commandDirectory?.[0].fsPath || workspaceFolder,
         variables: variablesFile?.[0].fsPath,
         hotReload: hotReload === "Yes",
       });
@@ -492,11 +499,13 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Work directory.
-      const workDir = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
-      if (!workDir) {
+      // Workspace folder.
+      let workspaceFolder = "";
+      try {
+        workspaceFolder = getWorkspaceFolderPath();
+      } catch (error) {
         vscode.window.showErrorMessage(
-          "Cloney validate failed. Please open a folder first."
+          "Cloney start failed. Please open a folder first."
         );
         return;
       }
@@ -507,7 +516,7 @@ export async function activate(context: vscode.ExtensionContext) {
         {
           title: "Directory Selection",
           placeHolder: `The \"cloney validate\" command will be run in your workspace directory (${basename(
-            workDir
+            workspaceFolder
           )}). Is this OK or would you like to select another directory?`,
           ignoreFocusOut: true,
         }
@@ -519,7 +528,7 @@ export async function activate(context: vscode.ExtensionContext) {
       if (shouldSelectCommandDirectory === "Select Another Directory") {
         commandDirectory = await vscode.window.showOpenDialog({
           title: "Validate Directory",
-          defaultUri: vscode.Uri.file(workDir),
+          defaultUri: vscode.Uri.file(workspaceFolder),
           canSelectFiles: false,
           canSelectFolders: true,
           canSelectMany: false,
@@ -531,7 +540,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       // Run the command.
-      runCloneyValidateCommand(commandDirectory?.[0].fsPath || workDir);
+      runCloneyValidateCommand(commandDirectory?.[0].fsPath || workspaceFolder);
     })
   );
 }

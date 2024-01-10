@@ -131,7 +131,7 @@
           "cloney.enableGoTemplatesSuggestions": {
             "type": "boolean",
             "default": true,
-            "description": "Whether or not to enable Go Templates suggestions."
+            "description": "Whether or not to enable Go Templates suggestions when a Cloney metadata file (.cloney.yaml) is present."
           }
         }
       }
