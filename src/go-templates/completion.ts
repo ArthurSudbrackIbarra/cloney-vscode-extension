@@ -2,8 +2,12 @@ import * as vscode from "vscode";
 import * as yaml from "js-yaml";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
-import { getWorkspaceFolderPath, getCurrentFileDirectory } from "../vscode";
-import { CLONEY_METADATA_FILE_NAME } from "../constants";
+import {
+  getWorkspaceFolderPath,
+  getCurrentFileDirectory,
+  getUserSetting,
+} from "../vscode";
+import { CLONEY_METADATA_FILE_NAME, EXTENSION_SETTINGS } from "../constants";
 import { goTemplateCompletionItems } from "./items";
 
 // Defines a completion provider for Cloney Go Templates.
@@ -17,6 +21,15 @@ export class CloneyGoTemplatesCompletionProvider
     token: vscode.CancellationToken,
     context: vscode.CompletionContext
   ): Promise<vscode.CompletionItem[]> {
+    // Check if the user has enabled Go Templates suggestions.
+    // If not, return an empty array.
+    const enableGoTemplatesSuggestions = getUserSetting<boolean>(
+      EXTENSION_SETTINGS.enableGoTemplatesSuggestions
+    );
+    if (!enableGoTemplatesSuggestions) {
+      return [];
+    }
+
     let outOfScopeDirectory = "";
     let currentDirectory = "";
     try {

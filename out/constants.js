@@ -30,6 +30,7 @@ exports.CLONEY_EXTENSION_TEMP_DIR = `${(0, os_1.tmpdir)()}/cloney-vscode-extensi
 // Defines the names of the Cloney extension user settings.
 exports.EXTENSION_SETTINGS = {
     cloneyExecutablePath: "cloney.cloneyExecutablePath",
+    enableGoTemplatesSuggestions: "cloney.enableGoTemplatesSuggestions",
 };
 // Defines the compatible major version of Cloney.
 exports.COMPATIBLE_CLONEY_MAJOR_VERSION = 1;

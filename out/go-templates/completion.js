@@ -12,6 +12,12 @@ const items_1 = require("./items");
 class CloneyGoTemplatesCompletionProvider {
     // Provides completion items for the Cloney Go Templates.
     async provideCompletionItems(document, position, token, context) {
+        // Check if the user has enabled Go Templates suggestions.
+        // If not, return an empty array.
+        const enableGoTemplatesSuggestions = (0, vscode_1.getUserSetting)(constants_1.EXTENSION_SETTINGS.enableGoTemplatesSuggestions);
+        if (!enableGoTemplatesSuggestions) {
+            return [];
+        }
         let outOfScopeDirectory = "";
         let currentDirectory = "";
         try {

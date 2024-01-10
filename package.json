@@ -127,6 +127,11 @@
             "type": "string",
             "default": "",
             "description": "(Optional) The absolute path to the Cloney executable."
+          },
+          "cloney.enableGoTemplatesSuggestions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether or not to enable Go Templates suggestions."
           }
         }
       }

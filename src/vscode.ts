@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { readFile } from "fs/promises";
 import { dirname } from "path";
 
 // Function to get the workspace folder path.
