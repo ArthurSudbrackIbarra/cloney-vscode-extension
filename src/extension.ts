@@ -10,6 +10,7 @@ import {
   runCloneyDryRunCommand,
   runCloneyValidateCommand,
 } from "./cloney";
+import { getWorkspaceFolderPath, getCurrentFileDirectory } from "./vscode";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
 import { CloneyVariablesCompletionProvider } from "./variables-file/completion";
@@ -181,6 +182,26 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      // Run from workspace root or from current directory.
+      let currentDirectory = "";
+      try {
+        currentDirectory = getCurrentFileDirectory();
+      } catch (error) {}
+      // If the current directory is not the workspace root, ask the user if they want
+      // to run the command from the current directory or from the workspace root.
+      let runFromWorkspaceRoot: string | undefined;
+      if (currentDirectory && currentDirectory !== workDir) {
+        runFromWorkspaceRoot = await vscode.window.showQuickPick(
+          [`Root - ${workDir}`, `Current Directory - ${currentDirectory}`],
+          {
+            title: "Where to Create the Project?",
+            placeHolder:
+              "Would you like to create the project in the workspace root or in the current directory?",
+            ignoreFocusOut: true,
+          }
+        );
+      }
+
       // Name.
       const name = await vscode.window.showInputBox({
         title: "Template Repository Name",
@@ -230,7 +251,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Run the command.
       runCloneyStartCommand({
-        workDir,
+        workDir:
+          runFromWorkspaceRoot === `Root - ${workDir}`
+            ? workDir
+            : currentDirectory,
         authors,
         description,
         license,
@@ -407,6 +431,26 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       }
 
+      // Run from workspace root or from current directory.
+      let currentDirectory = "";
+      try {
+        currentDirectory = getCurrentFileDirectory();
+      } catch (error) {}
+      // If the current directory is not the workspace root, ask the user if they want
+      // to run the command from the current directory or from the workspace root.
+      let runFromWorkspaceRoot: string | undefined;
+      if (currentDirectory && currentDirectory !== workDir) {
+        runFromWorkspaceRoot = await vscode.window.showQuickPick(
+          [`Root - ${workDir}`, `Current Directory - ${currentDirectory}`],
+          {
+            title: "Run from Workspace Root?",
+            placeHolder:
+              "Would you like to run the command from the workspace root or from the current directory?",
+            ignoreFocusOut: true,
+          }
+        );
+      }
+
       // Hot reload.
       const hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
         title: "Hot Reload",
@@ -419,7 +463,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Run the command.
       runCloneyDryRunCommand({
-        workDir,
+        workDir:
+          runFromWorkspaceRoot === `Root - ${workDir}`
+            ? workDir
+            : currentDirectory,
         variables: variablesFile?.[0].fsPath,
         hotReload: hotReload === "Yes",
       });
@@ -443,8 +490,32 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      // Run from workspace root or from current directory.
+      let currentDirectory = "";
+      try {
+        currentDirectory = getCurrentFileDirectory();
+      } catch (error) {}
+      // If the current directory is not the workspace root, ask the user if they want
+      // to run the command from the current directory or from the workspace root.
+      let runFromWorkspaceRoot: string | undefined;
+      if (currentDirectory && currentDirectory !== workDir) {
+        runFromWorkspaceRoot = await vscode.window.showQuickPick(
+          [`Root - ${workDir}`, `Current Directory - ${currentDirectory}`],
+          {
+            title: "Run from Workspace Root?",
+            placeHolder:
+              "Would you like to run the command from the workspace root or from the current directory?",
+            ignoreFocusOut: true,
+          }
+        );
+      }
+
       // Run the command.
-      runCloneyValidateCommand(workDir);
+      runCloneyValidateCommand(
+        runFromWorkspaceRoot === `Root - ${workDir}`
+          ? workDir
+          : currentDirectory
+      );
     })
   );
 }
