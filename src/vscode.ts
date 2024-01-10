@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import { readFile } from "fs/promises";
+import { dirname } from "path";
 
-// Function to read a file from the user's workspace.
-export async function readUserFile(fileName: string): Promise<string> {
+// Function to get the workspace folder path.
+export function getWorkspaceFolderPath(): string {
   // Get the active workspace folder
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders) {
@@ -12,16 +13,27 @@ export async function readUserFile(fileName: string): Promise<string> {
   // Get the URI of the first workspace folder (you can loop through multiple folders if needed)
   const workspaceFolderUri = workspaceFolders[0].uri;
 
-  // Formulate the complete file path by joining the workspace folder URI and the file name
-  const filePath = vscode.Uri.joinPath(workspaceFolderUri, fileName);
+  // Get the path of the workspace folder.
+  const workspaceFolderPath = workspaceFolderUri.fsPath;
 
-  try {
-    // Read the file using fs.promises.readFile
-    const fileContent = await readFile(filePath.fsPath, "utf-8");
-    return fileContent;
-  } catch (error) {
-    throw error;
+  return workspaceFolderPath;
+}
+
+// Function to get the directory path of the file that the user is currently editing.
+export function getCurrentFileDirectory(): string {
+  // Get the active text editor.
+  const activeEditor = vscode.window.activeTextEditor;
+  if (!activeEditor) {
+    throw new Error("No active editor.");
   }
+
+  // Get the URI of the file that the user is currently editing.
+  const fileUri = activeEditor.document.uri;
+
+  // Get the directory path of the file.
+  const fileDirectory = dirname(fileUri.fsPath);
+
+  return fileDirectory;
 }
 
 // Function to get the value of a user setting.

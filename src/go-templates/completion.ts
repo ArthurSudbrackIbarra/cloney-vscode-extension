@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import * as yaml from "js-yaml";
-import { readUserFile } from "../vscode";
+import { join } from "path";
+import { existsSync, readFileSync } from "fs";
+import { getWorkspaceFolderPath, getCurrentFileDirectory } from "../vscode";
 import { CLONEY_METADATA_FILE_NAME } from "../constants";
 import { goTemplateCompletionItems } from "./items";
 
@@ -15,18 +17,33 @@ export class CloneyGoTemplatesCompletionProvider
     token: vscode.CancellationToken,
     context: vscode.CompletionContext
   ): Promise<vscode.CompletionItem[]> {
+    let outOfScopeDirectory = "";
+    let currentDirectory = "";
     try {
-      // Check if there is a Cloney metadata file in the user's workspace.
-      // If there is, return the completion items from it.
-      // If there isn't, return an empty array.
-      const content = await readUserFile(CLONEY_METADATA_FILE_NAME);
-      if (!content) {
-        return [];
-      }
-      return this.completionItemsFromYAML(content);
+      outOfScopeDirectory = join(getWorkspaceFolderPath(), "..");
+      currentDirectory = getCurrentFileDirectory();
     } catch (error) {
       return [];
     }
+
+    // Loop through the current directory and all parent directories,
+    // until we are no longer in the workspace folder.
+    while (currentDirectory !== outOfScopeDirectory) {
+      // Check if the current directory contains a Cloney metadata file.
+      const metadataFilePath = `${currentDirectory}/${CLONEY_METADATA_FILE_NAME}`;
+      if (existsSync(metadataFilePath)) {
+        // Read the Cloney metadata file and find every variable defined in it.
+        const content = readFileSync(metadataFilePath, "utf8");
+        return this.completionItemsFromYAML(content);
+      }
+
+      // If no Cloney metadata file was found in the current directory,
+      // move up one directory and try again.
+      currentDirectory = join(currentDirectory, "..");
+    }
+
+    // If no Cloney metadata file was found, return an empty array.
+    return [];
   }
 
   // Extracts completion items from parsed YAML content.
