@@ -55,18 +55,7 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 This extension contributes the following settings:
 
 - `cloney.cloneyExecutablePath`: (Optional) The absolute path to the Cloney executable.
-
-## Release Notes
-
-### 0.0.1
-
-- Initial release.
-- Added snippets and autocompletion for `.cloney.yaml` and `.cloney-vars` files.
-- Implemented the ability to run Cloney commands through the VSCode UI.
-
-### 0.0.2
-
-- Fixed a dependency error that was preventing the extension from working.
+- `cloney.enableGoTemplatesSuggestions`: Whether or not to enable Go Templates suggestions when a Cloney metadata file (`.cloney.yaml`) is present.
 
 ## Contributing
 

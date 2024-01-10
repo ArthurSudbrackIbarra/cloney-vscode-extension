@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import * as yaml from "js-yaml";
-import { readUserFile } from "../vscode";
+import { join } from "path";
+import { getWorkspaceFolderPath, getCurrentFileDirectory } from "../vscode";
 import { simpleGit, TaskOptions } from "simple-git";
 import { existsSync, readFileSync } from "fs";
 import {
@@ -27,16 +28,33 @@ export class CloneyVariablesCompletionProvider
 
     // If the user has not specified a remote Cloney repository,
     // check if the user has a local Cloney metadata file.
+    let outOfScopeDirectory = "";
+    let currentDirectory = "";
     try {
-      // Read the Cloney metadata file and find every variable defined in it.
-      const content = await readUserFile(CLONEY_METADATA_FILE_NAME);
-      if (!content) {
-        return [];
-      }
-      return this.completionItemsFromYAML(content);
+      outOfScopeDirectory = join(getWorkspaceFolderPath(), "..");
+      currentDirectory = getCurrentFileDirectory();
     } catch (error) {
       return [];
     }
+
+    // Loop through the current directory and all parent directories,
+    // until we are no longer in the workspace folder.
+    while (currentDirectory !== outOfScopeDirectory) {
+      // Check if the current directory contains a Cloney metadata file.
+      const metadataFilePath = `${currentDirectory}/${CLONEY_METADATA_FILE_NAME}`;
+      if (existsSync(metadataFilePath)) {
+        // Read the Cloney metadata file and find every variable defined in it.
+        const content = readFileSync(metadataFilePath, "utf8");
+        return this.completionItemsFromYAML(content);
+      }
+
+      // If no Cloney metadata file was found in the current directory,
+      // move up one directory and try again.
+      currentDirectory = join(currentDirectory, "..");
+    }
+
+    // If no Cloney metadata file was found, return an empty array.
+    return [];
   }
 
   public async completionItemsFromRemoteRepository(
@@ -192,15 +210,8 @@ export class CloneyVariablesCompletionProvider
         );
       }
       if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
-        // Remove '.git' from the URL.
-        let metadataFileURL = remoteRepositoryURL.slice(
-          0,
-          remoteRepositoryURL.length - 4
-        );
-        // Add the reference.
-        metadataFileURL += `/tree/${remoteRepositoryRef}/${CLONEY_METADATA_FILE_NAME}`;
         variableItem.documentation.appendMarkdown(
-          `\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`
+          `\n\n**Source:** Remote repository \`${remoteRepositoryURL}\` (branch/tag: \`${remoteRepositoryRef}\`).`
         );
       } else if (!isRemote) {
         variableItem.documentation.appendMarkdown(

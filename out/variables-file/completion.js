@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyVariablesCompletionProvider = void 0;
 const vscode = require("vscode");
 const yaml = require("js-yaml");
+const path_1 = require("path");
 const vscode_1 = require("../vscode");
 const simple_git_1 = require("simple-git");
 const fs_1 = require("fs");
@@ -17,17 +18,31 @@ class CloneyVariablesCompletionProvider {
         }
         // If the user has not specified a remote Cloney repository,
         // check if the user has a local Cloney metadata file.
+        let outOfScopeDirectory = "";
+        let currentDirectory = "";
         try {
-            // Read the Cloney metadata file and find every variable defined in it.
-            const content = await (0, vscode_1.readUserFile)(constants_1.CLONEY_METADATA_FILE_NAME);
-            if (!content) {
-                return [];
-            }
-            return this.completionItemsFromYAML(content);
+            outOfScopeDirectory = (0, path_1.join)((0, vscode_1.getWorkspaceFolderPath)(), "..");
+            currentDirectory = (0, vscode_1.getCurrentFileDirectory)();
         }
         catch (error) {
             return [];
         }
+        // Loop through the current directory and all parent directories,
+        // until we are no longer in the workspace folder.
+        while (currentDirectory !== outOfScopeDirectory) {
+            // Check if the current directory contains a Cloney metadata file.
+            const metadataFilePath = `${currentDirectory}/${constants_1.CLONEY_METADATA_FILE_NAME}`;
+            if ((0, fs_1.existsSync)(metadataFilePath)) {
+                // Read the Cloney metadata file and find every variable defined in it.
+                const content = (0, fs_1.readFileSync)(metadataFilePath, "utf8");
+                return this.completionItemsFromYAML(content);
+            }
+            // If no Cloney metadata file was found in the current directory,
+            // move up one directory and try again.
+            currentDirectory = (0, path_1.join)(currentDirectory, "..");
+        }
+        // If no Cloney metadata file was found, return an empty array.
+        return [];
     }
     async completionItemsFromRemoteRepository(document) {
         // Get the document text.
@@ -146,11 +161,7 @@ class CloneyVariablesCompletionProvider {
                 variableItem.documentation.appendMarkdown(`\n\n**Example:**\n\`\`\`yaml\n${exampleYAML}\n\`\`\``);
             }
             if (isRemote && remoteRepositoryURL && remoteRepositoryRef) {
-                // Remove '.git' from the URL.
-                let metadataFileURL = remoteRepositoryURL.slice(0, remoteRepositoryURL.length - 4);
-                // Add the reference.
-                metadataFileURL += `/tree/${remoteRepositoryRef}/${constants_1.CLONEY_METADATA_FILE_NAME}`;
-                variableItem.documentation.appendMarkdown(`\n\n**Source:** [Metadata File on Remote Repository](${metadataFileURL})`);
+                variableItem.documentation.appendMarkdown(`\n\n**Source:** Remote repository \`${remoteRepositoryURL}\` (branch/tag: \`${remoteRepositoryRef}\`).`);
             }
             else if (!isRemote) {
                 variableItem.documentation.appendMarkdown(`\n\n**Source:** Local \`.cloney.yaml\` file.`);

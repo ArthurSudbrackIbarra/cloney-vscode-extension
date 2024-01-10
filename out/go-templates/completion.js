@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CloneyGoTemplatesCompletionProvider = void 0;
 const vscode = require("vscode");
 const yaml = require("js-yaml");
+const path_1 = require("path");
+const fs_1 = require("fs");
 const vscode_1 = require("../vscode");
 const constants_1 = require("../constants");
 const items_1 = require("./items");
@@ -10,19 +12,37 @@ const items_1 = require("./items");
 class CloneyGoTemplatesCompletionProvider {
     // Provides completion items for the Cloney Go Templates.
     async provideCompletionItems(document, position, token, context) {
+        // Check if the user has enabled Go Templates suggestions.
+        // If not, return an empty array.
+        const enableGoTemplatesSuggestions = (0, vscode_1.getUserSetting)(constants_1.EXTENSION_SETTINGS.enableGoTemplatesSuggestions);
+        if (!enableGoTemplatesSuggestions) {
+            return [];
+        }
+        let outOfScopeDirectory = "";
+        let currentDirectory = "";
         try {
-            // Check if there is a Cloney metadata file in the user's workspace.
-            // If there is, return the completion items from it.
-            // If there isn't, return an empty array.
-            const content = await (0, vscode_1.readUserFile)(constants_1.CLONEY_METADATA_FILE_NAME);
-            if (!content) {
-                return [];
-            }
-            return this.completionItemsFromYAML(content);
+            outOfScopeDirectory = (0, path_1.join)((0, vscode_1.getWorkspaceFolderPath)(), "..");
+            currentDirectory = (0, vscode_1.getCurrentFileDirectory)();
         }
         catch (error) {
             return [];
         }
+        // Loop through the current directory and all parent directories,
+        // until we are no longer in the workspace folder.
+        while (currentDirectory !== outOfScopeDirectory) {
+            // Check if the current directory contains a Cloney metadata file.
+            const metadataFilePath = `${currentDirectory}/${constants_1.CLONEY_METADATA_FILE_NAME}`;
+            if ((0, fs_1.existsSync)(metadataFilePath)) {
+                // Read the Cloney metadata file and find every variable defined in it.
+                const content = (0, fs_1.readFileSync)(metadataFilePath, "utf8");
+                return this.completionItemsFromYAML(content);
+            }
+            // If no Cloney metadata file was found in the current directory,
+            // move up one directory and try again.
+            currentDirectory = (0, path_1.join)(currentDirectory, "..");
+        }
+        // If no Cloney metadata file was found, return an empty array.
+        return [];
     }
     // Extracts completion items from parsed YAML content.
     completionItemsFromYAML(content) {
