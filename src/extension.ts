@@ -191,11 +191,14 @@ export async function activate(context: vscode.ExtensionContext) {
       try {
         currentDirectory = getCurrentFileDirectory();
       } catch (error) {}
+      const workspaceRootOption = `Workspace Root (${basename(
+        workspaceFolder
+      )})`;
       let runFromWorkspaceRoot: string | undefined;
       if (currentDirectory && currentDirectory !== workspaceFolder) {
         runFromWorkspaceRoot = await vscode.window.showQuickPick(
           [
-            `Workspace Root (${basename(workspaceFolder)})`,
+            workspaceRootOption,
             `Current Directory (${basename(currentDirectory)})`,
           ],
           {
@@ -205,6 +208,9 @@ export async function activate(context: vscode.ExtensionContext) {
             ignoreFocusOut: true,
           }
         );
+        if (!runFromWorkspaceRoot) {
+          return;
+        }
       }
 
       // Name.
@@ -254,11 +260,12 @@ export async function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      console.log(workspaceRootOption, runFromWorkspaceRoot);
+
       // Run the command.
       runCloneyStartCommand({
         workDir:
-          runFromWorkspaceRoot ===
-          `Workspace Root (${basename(workspaceFolder)})`
+          !runFromWorkspaceRoot || runFromWorkspaceRoot === workspaceRootOption
             ? workspaceFolder
             : currentDirectory,
         authors,
