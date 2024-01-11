@@ -10,6 +10,7 @@ import {
   runCloneyDryRunCommand,
   runCloneyValidateCommand,
 } from "./cloney";
+import { isDockerInstalled, runDockerCloneyCloneCommand } from "./docker";
 import { getWorkspaceFolderPath, getCurrentFileDirectory } from "./vscode";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
@@ -279,121 +280,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Clone.
   context.subscriptions.push(
-    vscode.commands.registerCommand(constants.CLONE_COMMAND, async () => {
-      // Do not run this command if Cloney is not set up.
-      if (!isCloneySetUp()) {
-        return;
-      }
-
-      // Workspace folder.
-      let workspaceFolder = "";
-      try {
-        workspaceFolder = getWorkspaceFolderPath();
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          "Cloney start failed. Please open a folder first."
-        );
-        return;
-      }
-
-      // Template repository.
-      const repoURL = await vscode.window.showInputBox({
-        title: "Cloney Template Repository URL",
-        prompt: "Enter the Cloney template repository URL",
-        placeHolder: "https://github.com/username/repository.git",
-        ignoreFocusOut: true,
-      });
-      if (!repoURL) {
-        return;
-      }
-      const branchTagOption = await vscode.window.showQuickPick(
-        ["Refence by Branch", "Reference by Tag"],
-        {
-          title: "Cloney Template Repository Version",
-          placeHolder: "Select the repository version",
-          ignoreFocusOut: true,
-        }
-      );
-      if (!branchTagOption) {
-        return;
-      }
-      let repoBranch: string | undefined;
-      let repoTag: string | undefined;
-      if (branchTagOption === "Refence by Branch") {
-        repoBranch = await vscode.window.showInputBox({
-          title: "Cloney Template Repository Branch",
-          prompt: "Enter the Cloney template repository branch",
-          value: "main",
-          placeHolder: "main",
-          ignoreFocusOut: true,
-        });
-        if (!repoBranch) {
-          return;
-        }
-      } else {
-        repoTag = await vscode.window.showInputBox({
-          title: "Cloney Template Repository Tag",
-          prompt: "Enter the Cloney template repository tag",
-          placeHolder: "1.0.0",
-          ignoreFocusOut: true,
-        });
-        if (!repoTag) {
-          return;
-        }
-      }
-
-      // Output directory.
-      const outputDirName = await vscode.window.showInputBox({
-        title: "Target Directory Name",
-        prompt: "Enter the target directory, where the template will be cloned",
-        placeHolder: "clone-output",
-        ignoreFocusOut: true,
-      });
-      if (!outputDirName) {
-        return;
-      }
-
-      // Variables file.
-      const shouldSelectVariablesFile = await vscode.window.showQuickPick(
-        ["Yes", "No"],
-        {
-          title: "Variables File",
-          placeHolder: "Would you like to select a variables file?",
-          ignoreFocusOut: true,
-        }
-      );
-      if (!shouldSelectVariablesFile) {
-        return;
-      }
-      let variablesFile: vscode.Uri[] | undefined;
-      if (shouldSelectVariablesFile === "Yes") {
-        variablesFile = await vscode.window.showOpenDialog({
-          title: "Variables File",
-          defaultUri: vscode.Uri.file(
-            `${workspaceFolder}/${constants.CLONEY_VARIABLES_FILE_NAME}`
-          ),
-          canSelectFiles: true,
-          canSelectFolders: false,
-          canSelectMany: false,
-          filters: {
-            "Cloney Variables File": ["yaml", "yml"],
-          },
-          openLabel: "Select Variables File",
-        });
-        if (!variablesFile) {
-          return;
-        }
-      }
-
-      // Run the command.
-      runCloneyCloneCommand({
-        workDir: workspaceFolder,
-        repoURL,
-        repoBranch,
-        repoTag,
-        outputDirName,
-        variables: variablesFile?.[0].fsPath,
-      });
+    vscode.commands.registerCommand(constants.CLONE_COMMAND, () => {
+      cloneyClone(false);
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.DOCKER_CLONE_COMMAND, () => {
+      cloneyClone(true);
     })
   );
 
@@ -550,6 +443,140 @@ export async function activate(context: vscode.ExtensionContext) {
       runCloneyValidateCommand(commandDirectory?.[0].fsPath || workspaceFolder);
     })
   );
+}
+
+// Cloney clone.
+async function cloneyClone(isDocker: boolean) {
+  // Do not run this command if Cloney is not set up and not running with Docker.
+  if (!isDocker && !isCloneySetUp()) {
+    return;
+  }
+
+  // Do not run this command if running with Docker and Docker is not installed.
+  if (isDocker && !isDockerInstalled()) {
+    return;
+  }
+
+  // Workspace folder.
+  let workspaceFolder = "";
+  try {
+    workspaceFolder = getWorkspaceFolderPath();
+  } catch (error) {
+    vscode.window.showErrorMessage(
+      "Cloney start failed. Please open a folder first."
+    );
+    return;
+  }
+
+  // Template repository.
+  const repoURL = await vscode.window.showInputBox({
+    title: "Cloney Template Repository URL",
+    prompt: "Enter the Cloney template repository URL",
+    placeHolder: "https://github.com/username/repository.git",
+    ignoreFocusOut: true,
+  });
+  if (!repoURL) {
+    return;
+  }
+  const branchTagOption = await vscode.window.showQuickPick(
+    ["Refence by Branch", "Reference by Tag"],
+    {
+      title: "Cloney Template Repository Version",
+      placeHolder: "Select the repository version",
+      ignoreFocusOut: true,
+    }
+  );
+  if (!branchTagOption) {
+    return;
+  }
+  let repoBranch: string | undefined;
+  let repoTag: string | undefined;
+  if (branchTagOption === "Refence by Branch") {
+    repoBranch = await vscode.window.showInputBox({
+      title: "Cloney Template Repository Branch",
+      prompt: "Enter the Cloney template repository branch",
+      value: "main",
+      placeHolder: "main",
+      ignoreFocusOut: true,
+    });
+    if (!repoBranch) {
+      return;
+    }
+  } else {
+    repoTag = await vscode.window.showInputBox({
+      title: "Cloney Template Repository Tag",
+      prompt: "Enter the Cloney template repository tag",
+      placeHolder: "1.0.0",
+      ignoreFocusOut: true,
+    });
+    if (!repoTag) {
+      return;
+    }
+  }
+
+  // Output directory.
+  const outputDirName = await vscode.window.showInputBox({
+    title: "Target Directory Name",
+    prompt: "Enter the target directory, where the template will be cloned",
+    placeHolder: "clone-output",
+    ignoreFocusOut: true,
+  });
+  if (!outputDirName) {
+    return;
+  }
+
+  // Variables file.
+  const shouldSelectVariablesFile = await vscode.window.showQuickPick(
+    ["Yes", "No"],
+    {
+      title: "Variables File",
+      placeHolder: "Would you like to select a variables file?",
+      ignoreFocusOut: true,
+    }
+  );
+  if (!shouldSelectVariablesFile) {
+    return;
+  }
+  let variablesFile: vscode.Uri[] | undefined;
+  if (shouldSelectVariablesFile === "Yes") {
+    variablesFile = await vscode.window.showOpenDialog({
+      title: "Variables File",
+      defaultUri: vscode.Uri.file(
+        `${workspaceFolder}/${constants.CLONEY_VARIABLES_FILE_NAME}`
+      ),
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      filters: {
+        "Cloney Variables File": ["yaml", "yml"],
+      },
+      openLabel: "Select Variables File",
+    });
+    if (!variablesFile) {
+      return;
+    }
+  }
+
+  // Run the command.
+  if (!isDocker) {
+    runCloneyCloneCommand({
+      workDir: workspaceFolder,
+      repoURL,
+      repoBranch,
+      repoTag,
+      outputDirName,
+      variables: variablesFile?.[0].fsPath,
+    });
+  } else {
+    runDockerCloneyCloneCommand({
+      workDir: workspaceFolder,
+      repoURL,
+      repoBranch,
+      repoTag,
+      outputDirName,
+      variables: variablesFile?.[0].fsPath,
+    });
+  }
 }
 
 // This method is called when your extension is deactivated

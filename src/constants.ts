@@ -17,6 +17,10 @@ export const CLONE_COMMAND = "cloney.clone";
 export const DRY_RUN_COMMAND = "cloney.dry-run";
 export const START_COMMAND = "cloney.start";
 export const VALIDATE_COMMAND = "cloney.validate";
+export const DOCKER_CLONE_COMMAND = "cloney.docker-clone";
+export const DOCKER_DRY_RUN_COMMAND = "cloney.docker-dry-run";
+export const DOCKER_START_COMMAND = "cloney.docker-start";
+export const DOCKER_VALIDATE_COMMAND = "cloney.docker-validate";
 
 // Defines the global state keys for Cloney extension.
 export const GLOBAL_STATE_KEYS = {
@@ -35,9 +39,13 @@ export const CLONEY_GITHUB_URL =
 // Defines the temporary directory for Cloney extension.
 export const CLONEY_EXTENSION_TEMP_DIR = `${tmpdir()}/cloney-vscode-extension`;
 
+// Defines the Cloney Docker image.
+export const CLONEY_DOCKER_IMAGE = "magicmanatee/cloney:1.1.0";
+
 // Defines the names of the Cloney extension user settings.
 export const EXTENSION_SETTINGS = {
   cloneyExecutablePath: "cloney.cloneyExecutablePath",
+  dockerExecutablePath: "cloney.dockerExecutablePath",
   enableGoTemplatesSuggestions: "cloney.enableGoTemplatesSuggestions",
 };
 

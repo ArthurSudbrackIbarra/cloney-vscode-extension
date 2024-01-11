@@ -67,6 +67,30 @@
         "title": "Validate this Cloney Template Repository",
         "category": "Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.docker-dry-run",
+        "title": "Run Cloney Dry-Run Here",
+        "category": "Cloney Docker",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.docker-clone",
+        "title": "Clone a Cloney Template Repository Here",
+        "category": "Cloney Docker",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.docker-start",
+        "title": "Start a Cloney Template Repository Here",
+        "category": "Cloney Docker",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
+      },
+      {
+        "command": "cloney.docker-validate",
+        "title": "Validate this Cloney Template Repository",
+        "category": "Cloney Docker",
+        "icon": "./images/cloney-logo-no-text-rounded.png"
       }
     ],
     "languages": [
@@ -127,6 +151,11 @@
             "type": "string",
             "default": "",
             "description": "(Optional) The absolute path to the Cloney executable."
+          },
+          "cloney.dockerExecutablePath": {
+            "type": "string",
+            "default": "",
+            "description": "(Optional) The absolute path to the Docker executable. Only applicable if using Cloney with Docker."
           },
           "cloney.enableGoTemplatesSuggestions": {
             "type": "boolean",
