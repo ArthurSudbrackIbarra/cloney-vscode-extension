@@ -13,6 +13,7 @@ import {
 import {
   isDockerInstalled,
   runDockerCloneyCloneCommand,
+  runDockerCloneyDryRunCommand,
   runDockerCloneyStartCommand,
 } from "./docker";
 import { getWorkspaceFolderPath, getCurrentFileDirectory } from "./vscode";
@@ -194,102 +195,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Dry Run.
   context.subscriptions.push(
-    vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, async () => {
-      // Do not run this command if Cloney is not set up.
-      if (!isCloneySetUp()) {
-        return;
-      }
-
-      // Workspace folder.
-      let workspaceFolder = "";
-      try {
-        workspaceFolder = getWorkspaceFolderPath();
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          "Cloney start failed. Please open a folder first."
-        );
-        return;
-      }
-
-      // Command directory.
-      const shouldSelectCommandDirectory = await vscode.window.showQuickPick(
-        ["OK", "Select Another Directory"],
-        {
-          title: "Directory Selection",
-          placeHolder: `The \"cloney dry-run\" command will be run in your workspace directory (${basename(
-            workspaceFolder
-          )}). Is this OK or would you like to select another directory?`,
-          ignoreFocusOut: true,
-        }
-      );
-      if (!shouldSelectCommandDirectory) {
-        return;
-      }
-      let commandDirectory: vscode.Uri[] | undefined;
-      if (shouldSelectCommandDirectory === "Select Another Directory") {
-        commandDirectory = await vscode.window.showOpenDialog({
-          title: "Dry-Run Directory",
-          defaultUri: vscode.Uri.file(workspaceFolder),
-          canSelectFiles: false,
-          canSelectFolders: true,
-          canSelectMany: false,
-          openLabel: "Select Dry-Run Directory",
-        });
-        if (!commandDirectory) {
-          return;
-        }
-      }
-
-      // Variables file.
-      const shouldSelectVariablesFile = await vscode.window.showQuickPick(
-        ["Yes", "No"],
-        {
-          title: "Variables File",
-          placeHolder: "Would you like to select a variables file?",
-          ignoreFocusOut: true,
-        }
-      );
-      if (!shouldSelectVariablesFile) {
-        return;
-      }
-      let variablesFile: vscode.Uri[] | undefined;
-      if (shouldSelectVariablesFile === "Yes") {
-        variablesFile = await vscode.window.showOpenDialog({
-          title: "Variables File",
-          defaultUri: vscode.Uri.file(
-            `${
-              commandDirectory ? commandDirectory[0].fsPath : workspaceFolder
-            }/${constants.CLONEY_VARIABLES_FILE_NAME}`
-          ),
-          canSelectFiles: true,
-          canSelectFolders: false,
-          canSelectMany: false,
-          filters: {
-            "Cloney Variables File": ["yaml", "yml"],
-          },
-          openLabel: "Select Variables File",
-        });
-        if (!variablesFile) {
-          return;
-        }
-      }
-
-      // Hot reload.
-      const hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
-        title: "Hot Reload",
-        placeHolder: "Would you like to enable hot reload?",
-        ignoreFocusOut: true,
-      });
-      if (!hotReload) {
-        return;
-      }
-
-      // Run the command.
-      runCloneyDryRunCommand({
-        workDir: commandDirectory?.[0].fsPath || workspaceFolder,
-        variables: variablesFile?.[0].fsPath,
-        hotReload: hotReload === "Yes",
-      });
+    vscode.commands.registerCommand(constants.DRY_RUN_COMMAND, () => {
+      cloneyDryRun(false);
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.DOCKER_DRY_RUN_COMMAND, () => {
+      cloneyDryRun(true);
     })
   );
 
@@ -488,7 +400,7 @@ async function cloneyClone(isDocker: boolean) {
     workspaceFolder = getWorkspaceFolderPath();
   } catch (error) {
     vscode.window.showErrorMessage(
-      "Cloney start failed. Please open a folder first."
+      "Cloney clone failed. Please open a folder first."
     );
     return;
   }
@@ -600,6 +512,118 @@ async function cloneyClone(isDocker: boolean) {
       repoTag,
       outputDirName,
       variables: variablesFile?.[0].fsPath,
+    });
+  }
+}
+
+// Cloney Dry-Run.
+async function cloneyDryRun(isDocker: boolean) {
+  // Do not run this command if Cloney is not set up and not running with Docker.
+  if (!isDocker && !isCloneySetUp()) {
+    return;
+  }
+
+  // Do not run this command if running with Docker and Docker is not installed.
+  if (isDocker && !isDockerInstalled()) {
+    return;
+  }
+
+  // Workspace folder.
+  let workspaceFolder = "";
+  try {
+    workspaceFolder = getWorkspaceFolderPath();
+  } catch (error) {
+    vscode.window.showErrorMessage(
+      "Cloney dry-run failed. Please open a folder first."
+    );
+    return;
+  }
+
+  // Command directory.
+  const shouldSelectCommandDirectory = await vscode.window.showQuickPick(
+    ["OK", "Select Another Directory"],
+    {
+      title: "Directory Selection",
+      placeHolder: `The \"cloney dry-run\" command will be run in your workspace directory (${basename(
+        workspaceFolder
+      )}). Is this OK or would you like to select another directory?`,
+      ignoreFocusOut: true,
+    }
+  );
+  if (!shouldSelectCommandDirectory) {
+    return;
+  }
+  let commandDirectory: vscode.Uri[] | undefined;
+  if (shouldSelectCommandDirectory === "Select Another Directory") {
+    commandDirectory = await vscode.window.showOpenDialog({
+      title: "Dry-Run Directory",
+      defaultUri: vscode.Uri.file(workspaceFolder),
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      openLabel: "Select Dry-Run Directory",
+    });
+    if (!commandDirectory) {
+      return;
+    }
+  }
+
+  // Variables file.
+  const shouldSelectVariablesFile = await vscode.window.showQuickPick(
+    ["Yes", "No"],
+    {
+      title: "Variables File",
+      placeHolder: "Would you like to select a variables file?",
+      ignoreFocusOut: true,
+    }
+  );
+  if (!shouldSelectVariablesFile) {
+    return;
+  }
+  let variablesFile: vscode.Uri[] | undefined;
+  if (shouldSelectVariablesFile === "Yes") {
+    variablesFile = await vscode.window.showOpenDialog({
+      title: "Variables File",
+      defaultUri: vscode.Uri.file(
+        `${commandDirectory ? commandDirectory[0].fsPath : workspaceFolder}/${
+          constants.CLONEY_VARIABLES_FILE_NAME
+        }`
+      ),
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      filters: {
+        "Cloney Variables File": ["yaml", "yml"],
+      },
+      openLabel: "Select Variables File",
+    });
+    if (!variablesFile) {
+      return;
+    }
+  }
+
+  // Hot reload.
+  const hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
+    title: "Hot Reload",
+    placeHolder: "Would you like to enable hot reload?",
+    ignoreFocusOut: true,
+  });
+  if (!hotReload) {
+    return;
+  }
+
+  // Run the command.
+  if (!isDocker) {
+    runCloneyDryRunCommand({
+      workDir: commandDirectory?.[0].fsPath || workspaceFolder,
+      variables: variablesFile?.[0].fsPath,
+      hotReload: hotReload === "Yes",
+    });
+  } else {
+    runDockerCloneyDryRunCommand({
+      workDir: commandDirectory?.[0].fsPath || workspaceFolder,
+      variables: variablesFile?.[0].fsPath,
+      hotReload: hotReload === "Yes",
     });
   }
 }

@@ -1,6 +1,10 @@
 import { EXTENSION_SETTINGS, CLONEY_DOCKER_IMAGE } from "./constants";
 import { getUserSetting } from "./vscode";
-import { CloneyStartCommandOptions, CloneyCloneCommandOptions } from "./cloney";
+import {
+  CloneyStartCommandOptions,
+  CloneyCloneCommandOptions,
+  CloneyDryRunCommandOptions,
+} from "./cloney";
 import { createTerminal } from "./vscode";
 import { execSync } from "child_process";
 
@@ -44,7 +48,7 @@ export function runDockerCloneyStartCommand(
   options: CloneyStartCommandOptions
 ) {
   let command = dockerCommand(
-    `run --rm -it -v "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney start --non-interactive`
+    `run --rm -it --volume "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney start --non-interactive`
   );
   command += ` --output "${options.outputDirName}"`;
   for (const author of options.authors) {
@@ -61,7 +65,7 @@ export function runDockerCloneyCloneCommand(
   options: CloneyCloneCommandOptions
 ) {
   let command = dockerCommand(
-    `run --rm -it -v "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`
+    `run --rm -it --volume "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`
   );
   if (options.repoBranch) {
     command += ` --branch "${options.repoBranch}"`;
@@ -74,4 +78,20 @@ export function runDockerCloneyCloneCommand(
     command += ` --variables "${options.variables}"`;
   }
   createTerminal("Docker Cloney Clone", command);
+}
+
+// Function to run Cloney 'dry-run' with Docker.
+export function runDockerCloneyDryRunCommand(
+  options: CloneyDryRunCommandOptions
+) {
+  let command = dockerCommand(
+    `run --rm -it --volume "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney dry-run`
+  );
+  if (options.variables) {
+    command += ` --variables "${options.variables}"`;
+  }
+  if (options.hotReload) {
+    command += " --hot-reload";
+  }
+  createTerminal("Docker Cloney Dry-Run", command);
 }

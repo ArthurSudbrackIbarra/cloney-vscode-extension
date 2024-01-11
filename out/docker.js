@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDockerCloneyCloneCommand = exports.runDockerCloneyStartCommand = exports.isDockerInstalled = void 0;
+exports.runDockerCloneyDryRunCommand = exports.runDockerCloneyCloneCommand = exports.runDockerCloneyStartCommand = exports.isDockerInstalled = void 0;
 const constants_1 = require("./constants");
 const vscode_1 = require("./vscode");
 const vscode_2 = require("./vscode");
@@ -41,7 +41,7 @@ function isDockerInstalled() {
 exports.isDockerInstalled = isDockerInstalled;
 // Function to run Cloney 'start' with Docker.
 function runDockerCloneyStartCommand(options) {
-    let command = dockerCommand(`run --rm -it -v "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney start --non-interactive`);
+    let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney start --non-interactive`);
     command += ` --output "${options.outputDirName}"`;
     for (const author of options.authors) {
         command += ` --authors "${author}"`;
@@ -54,7 +54,7 @@ function runDockerCloneyStartCommand(options) {
 exports.runDockerCloneyStartCommand = runDockerCloneyStartCommand;
 // Function to run Cloney 'clone' with Docker.
 function runDockerCloneyCloneCommand(options) {
-    let command = dockerCommand(`run --rm -it -v "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`);
+    let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`);
     if (options.repoBranch) {
         command += ` --branch "${options.repoBranch}"`;
     }
@@ -68,4 +68,16 @@ function runDockerCloneyCloneCommand(options) {
     (0, vscode_2.createTerminal)("Docker Cloney Clone", command);
 }
 exports.runDockerCloneyCloneCommand = runDockerCloneyCloneCommand;
+// Function to run Cloney 'dry-run' with Docker.
+function runDockerCloneyDryRunCommand(options) {
+    let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney dry-run`);
+    if (options.variables) {
+        command += ` --variables "${options.variables}"`;
+    }
+    if (options.hotReload) {
+        command += " --hot-reload";
+    }
+    (0, vscode_2.createTerminal)("Docker Cloney Dry-Run", command);
+}
+exports.runDockerCloneyDryRunCommand = runDockerCloneyDryRunCommand;
 //# sourceMappingURL=docker.js.map
