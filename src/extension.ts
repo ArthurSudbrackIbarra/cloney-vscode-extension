@@ -10,7 +10,11 @@ import {
   runCloneyDryRunCommand,
   runCloneyValidateCommand,
 } from "./cloney";
-import { isDockerInstalled, runDockerCloneyCloneCommand } from "./docker";
+import {
+  isDockerInstalled,
+  runDockerCloneyCloneCommand,
+  runDockerCloneyStartCommand,
+} from "./docker";
 import { getWorkspaceFolderPath, getCurrentFileDirectory } from "./vscode";
 import { CloneyMetadataCompletionProvider } from "./metadata-file/completion";
 import { CloneyMetadataHoverProvider } from "./metadata-file/hover";
@@ -74,9 +78,6 @@ function isCloneySetUp(): boolean {
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   console.log("Cloney extension activated.");
-
-  // Check if Cloney is installed and the version is compatible with the extension.
-  isCloneySetUp();
 
   // Completion providers.
   context.subscriptions.push(
@@ -169,112 +170,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   // Start.
   context.subscriptions.push(
-    vscode.commands.registerCommand(constants.START_COMMAND, async () => {
-      // Do not run this command if Cloney is not set up.
-      if (!isCloneySetUp()) {
-        return;
-      }
-
-      // Workspace folder.
-      let workspaceFolder = "";
-      try {
-        workspaceFolder = getWorkspaceFolderPath();
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          "Cloney start failed. Please open a folder first."
-        );
-        return;
-      }
-
-      // If the current directory is not the workspace folder, ask the user if they want
-      // to run the command in the current directory or in the workspace folder.
-      let currentDirectory = "";
-      try {
-        currentDirectory = getCurrentFileDirectory();
-      } catch (error) {}
-      const workspaceRootOption = `Workspace Root (${basename(
-        workspaceFolder
-      )})`;
-      let runFromWorkspaceRoot: string | undefined;
-      if (currentDirectory && currentDirectory !== workspaceFolder) {
-        runFromWorkspaceRoot = await vscode.window.showQuickPick(
-          [
-            workspaceRootOption,
-            `Current Directory (${basename(currentDirectory)})`,
-          ],
-          {
-            title: "Where to Create the Project?",
-            placeHolder:
-              "Would you like to create the project in the workspace root or in the current directory?",
-            ignoreFocusOut: true,
-          }
-        );
-        if (!runFromWorkspaceRoot) {
-          return;
-        }
-      }
-
-      // Name.
-      const name = await vscode.window.showInputBox({
-        title: "Template Repository Name",
-        prompt: "Enter the name of the template repository",
-        placeHolder: "my-cloney-template",
-        ignoreFocusOut: true,
-      });
-      if (!name) {
-        return;
-      }
-
-      // Description.
-      const description = await vscode.window.showInputBox({
-        title: "Template Repository Description",
-        prompt: "Enter the description of the template repository",
-        placeHolder: "My Cloney Template",
-        ignoreFocusOut: true,
-      });
-      if (!description) {
-        return;
-      }
-
-      // Authors.
-      const authorsStr = await vscode.window.showInputBox({
-        title: "Template Repository Authors",
-        prompt:
-          "Enter the authors of the template repository (comma-separated)",
-        placeHolder: "John Doe, Michael Doe",
-        ignoreFocusOut: true,
-      });
-      if (!authorsStr) {
-        return;
-      }
-      const authors = authorsStr.split(",").map((author) => author.trim());
-
-      // License.
-      const license = await vscode.window.showInputBox({
-        title: "Template Repository License",
-        prompt: "Enter the license of the template repository",
-        placeHolder: "MIT",
-        value: "MIT",
-        ignoreFocusOut: true,
-      });
-      if (!license) {
-        return;
-      }
-
-      console.log(workspaceRootOption, runFromWorkspaceRoot);
-
-      // Run the command.
-      runCloneyStartCommand({
-        workDir:
-          !runFromWorkspaceRoot || runFromWorkspaceRoot === workspaceRootOption
-            ? workspaceFolder
-            : currentDirectory,
-        authors,
-        description,
-        license,
-        name,
-        outputDirName: name,
-      });
+    vscode.commands.registerCommand(constants.START_COMMAND, () => {
+      cloneyStart(false);
+    })
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(constants.DOCKER_START_COMMAND, () => {
+      cloneyStart(true);
     })
   );
 
@@ -445,7 +347,130 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 }
 
-// Cloney clone.
+// Cloney Start.
+async function cloneyStart(isDocker: boolean) {
+  // Do not run this command if Cloney is not set up and not running with Docker.
+  if (!isDocker && !isCloneySetUp()) {
+    return;
+  }
+
+  // Do not run this command if running with Docker and Docker is not installed.
+  if (isDocker && !isDockerInstalled()) {
+    return;
+  }
+
+  // Workspace folder.
+  let workspaceFolder = "";
+  try {
+    workspaceFolder = getWorkspaceFolderPath();
+  } catch (error) {
+    vscode.window.showErrorMessage(
+      "Cloney start failed. Please open a folder first."
+    );
+    return;
+  }
+
+  // If the current directory is not the workspace folder, ask the user if they want
+  // to run the command in the current directory or in the workspace folder.
+  let currentDirectory = "";
+  try {
+    currentDirectory = getCurrentFileDirectory();
+  } catch (error) {}
+  const workspaceRootOption = `Workspace Root (${basename(workspaceFolder)})`;
+  let runFromWorkspaceRoot: string | undefined;
+  if (currentDirectory && currentDirectory !== workspaceFolder) {
+    runFromWorkspaceRoot = await vscode.window.showQuickPick(
+      [
+        workspaceRootOption,
+        `Current Directory (${basename(currentDirectory)})`,
+      ],
+      {
+        title: "Where to Create the Project?",
+        placeHolder:
+          "Would you like to create the project in the workspace root or in the current directory?",
+        ignoreFocusOut: true,
+      }
+    );
+    if (!runFromWorkspaceRoot) {
+      return;
+    }
+  }
+
+  // Name.
+  const name = await vscode.window.showInputBox({
+    title: "Template Repository Name",
+    prompt: "Enter the name of the template repository",
+    placeHolder: "my-cloney-template",
+    ignoreFocusOut: true,
+  });
+  if (!name) {
+    return;
+  }
+
+  // Description.
+  const description = await vscode.window.showInputBox({
+    title: "Template Repository Description",
+    prompt: "Enter the description of the template repository",
+    placeHolder: "My Cloney Template",
+    ignoreFocusOut: true,
+  });
+  if (!description) {
+    return;
+  }
+
+  // Authors.
+  const authorsStr = await vscode.window.showInputBox({
+    title: "Template Repository Authors",
+    prompt: "Enter the authors of the template repository (comma-separated)",
+    placeHolder: "John Doe, Michael Doe",
+    ignoreFocusOut: true,
+  });
+  if (!authorsStr) {
+    return;
+  }
+  const authors = authorsStr.split(",").map((author) => author.trim());
+
+  // License.
+  const license = await vscode.window.showInputBox({
+    title: "Template Repository License",
+    prompt: "Enter the license of the template repository",
+    placeHolder: "MIT",
+    value: "MIT",
+    ignoreFocusOut: true,
+  });
+  if (!license) {
+    return;
+  }
+
+  // Run the command.
+  if (!isDocker) {
+    runCloneyStartCommand({
+      workDir:
+        !runFromWorkspaceRoot || runFromWorkspaceRoot === workspaceRootOption
+          ? workspaceFolder
+          : currentDirectory,
+      authors,
+      description,
+      license,
+      name,
+      outputDirName: name,
+    });
+  } else {
+    runDockerCloneyStartCommand({
+      workDir:
+        !runFromWorkspaceRoot || runFromWorkspaceRoot === workspaceRootOption
+          ? workspaceFolder
+          : currentDirectory,
+      authors,
+      description,
+      license,
+      name,
+      outputDirName: name,
+    });
+  }
+}
+
+// Cloney Clone.
 async function cloneyClone(isDocker: boolean) {
   // Do not run this command if Cloney is not set up and not running with Docker.
   if (!isDocker && !isCloneySetUp()) {

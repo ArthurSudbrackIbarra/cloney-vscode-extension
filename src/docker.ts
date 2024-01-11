@@ -1,6 +1,6 @@
 import { EXTENSION_SETTINGS, CLONEY_DOCKER_IMAGE } from "./constants";
 import { getUserSetting } from "./vscode";
-import { CloneyCloneCommandOptions } from "./cloney";
+import { CloneyStartCommandOptions, CloneyCloneCommandOptions } from "./cloney";
 import { createTerminal } from "./vscode";
 import { execSync } from "child_process";
 
@@ -37,6 +37,23 @@ export function isDockerInstalled(): boolean {
     // If the command fails, Docker is not installed.
     return false;
   }
+}
+
+// Function to run Cloney 'start' with Docker.
+export function runDockerCloneyStartCommand(
+  options: CloneyStartCommandOptions
+) {
+  let command = dockerCommand(
+    `run --rm -it -v "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney start --non-interactive`
+  );
+  command += ` --output "${options.outputDirName}"`;
+  for (const author of options.authors) {
+    command += ` --authors "${author}"`;
+  }
+  command += ` --name "${options.name}"`;
+  command += ` --description "${options.description}"`;
+  command += ` --license "${options.license}"`;
+  createTerminal("Docker Cloney Start", command);
 }
 
 // Function to run Cloney 'clone' with Docker.

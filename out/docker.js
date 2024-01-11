@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDockerCloneyCloneCommand = exports.isDockerInstalled = void 0;
+exports.runDockerCloneyCloneCommand = exports.runDockerCloneyStartCommand = exports.isDockerInstalled = void 0;
 const constants_1 = require("./constants");
 const vscode_1 = require("./vscode");
 const vscode_2 = require("./vscode");
@@ -39,6 +39,19 @@ function isDockerInstalled() {
     }
 }
 exports.isDockerInstalled = isDockerInstalled;
+// Function to run Cloney 'start' with Docker.
+function runDockerCloneyStartCommand(options) {
+    let command = dockerCommand(`run --rm -it -v "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney start --non-interactive`);
+    command += ` --output "${options.outputDirName}"`;
+    for (const author of options.authors) {
+        command += ` --authors "${author}"`;
+    }
+    command += ` --name "${options.name}"`;
+    command += ` --description "${options.description}"`;
+    command += ` --license "${options.license}"`;
+    (0, vscode_2.createTerminal)("Docker Cloney Start", command);
+}
+exports.runDockerCloneyStartCommand = runDockerCloneyStartCommand;
 // Function to run Cloney 'clone' with Docker.
 function runDockerCloneyCloneCommand(options) {
     let command = dockerCommand(`run --rm -it -v "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`);

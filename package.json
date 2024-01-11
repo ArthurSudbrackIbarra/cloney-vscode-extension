@@ -155,7 +155,7 @@
           "cloney.dockerExecutablePath": {
             "type": "string",
             "default": "",
-            "description": "(Optional) The absolute path to the Docker executable. Only applicable if using Cloney with Docker."
+            "description": "(Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within a Docker container."
           },
           "cloney.enableGoTemplatesSuggestions": {
             "type": "boolean",

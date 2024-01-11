@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.4
+
+- Added Docker support. Now Cloney commands can be run from within a Docker container.
+
 ## 0.0.3
 
 - Added the `cloney.start` command to start a new Cloney project.
