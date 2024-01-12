@@ -1,4 +1,5 @@
 import { tmpdir } from "os";
+import { getUserSetting } from "./vscode";
 
 // Defines the name of the Cloney extension.
 export const EXTENSION_NAME = "cloney";
@@ -39,15 +40,17 @@ export const CLONEY_GITHUB_URL =
 // Defines the temporary directory for Cloney extension.
 export const CLONEY_EXTENSION_TEMP_DIR = `${tmpdir()}/cloney-vscode-extension`;
 
-// Defines the Cloney Docker image.
-export const CLONEY_DOCKER_IMAGE = "magicmanatee/cloney:1.1.0";
-
 // Defines the names of the Cloney extension user settings.
 export const EXTENSION_SETTINGS = {
   cloneyExecutablePath: "cloney.cloneyExecutablePath",
   dockerExecutablePath: "cloney.dockerExecutablePath",
   enableGoTemplatesSuggestions: "cloney.enableGoTemplatesSuggestions",
+  cloneyDockerImageTag: "cloney.cloneyDockerImageTag",
 };
+
+// Defines the Cloney Docker image.
+export const CLONEY_DOCKER_IMAGE = "magicmanatee/cloney";
+export const CLONEY_DOCKER_IMAGE_DEFAULT_TAG = "1.1.0";
 
 // Defines the names of the Cloney extension context settings.
 export const CONTEXT_SETTINGS = {

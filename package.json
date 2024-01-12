@@ -160,15 +160,25 @@
             "default": "",
             "description": "(Optional) The absolute path to the Cloney executable."
           },
+          "cloney.enableGoTemplatesSuggestions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether or not to enable Go Templates suggestions when a Cloney metadata file (.cloney.yaml) is present."
+          }
+        }
+      },
+      {
+        "title": "Cloney Extension (Docker)",
+        "properties": {
           "cloney.dockerExecutablePath": {
             "type": "string",
             "default": "",
             "description": "(Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within Docker containers."
           },
-          "cloney.enableGoTemplatesSuggestions": {
-            "type": "boolean",
-            "default": true,
-            "description": "Whether or not to enable Go Templates suggestions when a Cloney metadata file (.cloney.yaml) is present."
+          "cloney.cloneyDockerImageTag": {
+            "type": "string",
+            "default": "",
+            "description": "(Optional) The tag of the Cloney Docker image to use. Only applicable if you want to run Cloney commands from within Docker containers."
           }
         }
       }

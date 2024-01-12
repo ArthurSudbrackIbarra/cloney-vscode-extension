@@ -39,9 +39,14 @@ function isDockerInstalled() {
     }
 }
 exports.isDockerInstalled = isDockerInstalled;
+// Function to get the Cloney Docker image tag.
+function getDockerCloneyImageTag() {
+    const dockerCloneyImageTag = (0, vscode_1.getUserSetting)(constants_1.EXTENSION_SETTINGS.cloneyDockerImageTag);
+    return dockerCloneyImageTag || constants_1.CLONEY_DOCKER_IMAGE_DEFAULT_TAG;
+}
 // Function to run Cloney 'start' with Docker.
 function runDockerCloneyStartCommand(options) {
-    let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney start --non-interactive`);
+    let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE}:${getDockerCloneyImageTag()} cloney start --non-interactive`);
     command += ` --output "${options.outputDirName}"`;
     for (const author of options.authors) {
         command += ` --authors "${author}"`;
@@ -56,9 +61,9 @@ exports.runDockerCloneyStartCommand = runDockerCloneyStartCommand;
 function runDockerCloneyCloneCommand(options) {
     let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney"`);
     if (options.variables) {
-        command += ` --volume "${options.variables}:/home/cloney/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
+        command += ` --volume "${options.variables}:/home/cloney-vars/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
     }
-    command += ` ${constants_1.CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`;
+    command += ` ${constants_1.CLONEY_DOCKER_IMAGE}:${getDockerCloneyImageTag()} cloney clone "${options.repoURL}"`;
     if (options.repoBranch) {
         command += ` --branch "${options.repoBranch}"`;
     }
@@ -66,6 +71,9 @@ function runDockerCloneyCloneCommand(options) {
         command += ` --tag "${options.repoTag}"`;
     }
     command += ` --output "${options.outputDirName}"`;
+    if (options.variables) {
+        command += ` --variables "/home/cloney-vars/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
+    }
     (0, vscode_2.createTerminal)("Docker Cloney Clone", command);
 }
 exports.runDockerCloneyCloneCommand = runDockerCloneyCloneCommand;
@@ -73,9 +81,12 @@ exports.runDockerCloneyCloneCommand = runDockerCloneyCloneCommand;
 function runDockerCloneyDryRunCommand(options) {
     let command = dockerCommand(`run --rm -it --volume "${options.workDir}:/home/cloney"`);
     if (options.variables) {
-        command += ` --volume "${options.variables}:/home/cloney/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
+        command += ` --volume "${options.variables}:/home/cloney-vars/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
     }
-    command += ` ${constants_1.CLONEY_DOCKER_IMAGE} cloney dry-run`;
+    command += ` ${constants_1.CLONEY_DOCKER_IMAGE}:${getDockerCloneyImageTag()} cloney dry-run`;
+    if (options.variables) {
+        command += ` --variables "/home/cloney-vars/${constants_1.CLONEY_VARIABLES_FILE_NAME}"`;
+    }
     if (options.hotReload) {
         command += " --hot-reload";
     }
@@ -84,7 +95,7 @@ function runDockerCloneyDryRunCommand(options) {
 exports.runDockerCloneyDryRunCommand = runDockerCloneyDryRunCommand;
 // Function to run Cloney 'validate' with Docker.
 function runDockerCloneyValidateCommand(workDir) {
-    const command = dockerCommand(`run --rm -it --volume "${workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE} cloney validate`);
+    const command = dockerCommand(`run --rm -it --volume "${workDir}:/home/cloney" ${constants_1.CLONEY_DOCKER_IMAGE}:${getDockerCloneyImageTag()} cloney validate`);
     (0, vscode_2.createTerminal)("Docker Cloney Validate", command);
 }
 exports.runDockerCloneyValidateCommand = runDockerCloneyValidateCommand;
