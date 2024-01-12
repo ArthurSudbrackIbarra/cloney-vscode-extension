@@ -107,45 +107,11 @@ async function activate(context) {
         cloneyDryRun(true);
     }));
     // Validate.
-    context.subscriptions.push(vscode.commands.registerCommand(constants.VALIDATE_COMMAND, async () => {
-        // Do not run this command if Cloney is not set up.
-        if (!isCloneySetUp()) {
-            return;
-        }
-        // Workspace folder.
-        let workspaceFolder = "";
-        try {
-            workspaceFolder = (0, vscode_1.getWorkspaceFolderPath)();
-        }
-        catch (error) {
-            vscode.window.showErrorMessage("Cloney start failed. Please open a folder first.");
-            return;
-        }
-        // Command directory.
-        const shouldSelectCommandDirectory = await vscode.window.showQuickPick(["OK", "Select Another Directory"], {
-            title: "Directory Selection",
-            placeHolder: `The \"cloney validate\" command will be run in your workspace directory (${(0, path_1.basename)(workspaceFolder)}). Is this OK or would you like to select another directory?`,
-            ignoreFocusOut: true,
-        });
-        if (!shouldSelectCommandDirectory) {
-            return;
-        }
-        let commandDirectory;
-        if (shouldSelectCommandDirectory === "Select Another Directory") {
-            commandDirectory = await vscode.window.showOpenDialog({
-                title: "Validate Directory",
-                defaultUri: vscode.Uri.file(workspaceFolder),
-                canSelectFiles: false,
-                canSelectFolders: true,
-                canSelectMany: false,
-                openLabel: "Select Validate Directory",
-            });
-            if (!commandDirectory) {
-                return;
-            }
-        }
-        // Run the command.
-        (0, cloney_1.runCloneyValidateCommand)(commandDirectory?.[0].fsPath || workspaceFolder);
+    context.subscriptions.push(vscode.commands.registerCommand(constants.VALIDATE_COMMAND, () => {
+        cloneyValidate(false);
+    }));
+    context.subscriptions.push(vscode.commands.registerCommand(constants.DOCKER_VALIDATE_COMMAND, () => {
+        cloneyValidate(true);
     }));
 }
 exports.activate = activate;
@@ -447,13 +413,18 @@ async function cloneyDryRun(isDocker) {
         }
     }
     // Hot reload.
-    const hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
-        title: "Hot Reload",
-        placeHolder: "Would you like to enable hot reload?",
-        ignoreFocusOut: true,
-    });
-    if (!hotReload) {
-        return;
+    // For some reason, hot reload is not working with Docker.
+    // So, we will not ask the user if they want to enable hot reload if running with Docker.
+    let hotReload = "No";
+    if (!isDocker) {
+        hotReload = await vscode.window.showQuickPick(["Yes", "No"], {
+            title: "Hot Reload",
+            placeHolder: "Would you like to enable hot reload?",
+            ignoreFocusOut: true,
+        });
+        if (!hotReload) {
+            return;
+        }
     }
     // Run the command.
     if (!isDocker) {
@@ -469,6 +440,56 @@ async function cloneyDryRun(isDocker) {
             variables: variablesFile?.[0].fsPath,
             hotReload: hotReload === "Yes",
         });
+    }
+}
+// Cloney Validate.
+async function cloneyValidate(isDocker) {
+    // Do not run this command if Cloney is not set up and not running with Docker.
+    if (!isDocker && !isCloneySetUp()) {
+        return;
+    }
+    // Do not run this command if running with Docker and Docker is not installed.
+    if (isDocker && !(0, docker_1.isDockerInstalled)()) {
+        return;
+    }
+    // Workspace folder.
+    let workspaceFolder = "";
+    try {
+        workspaceFolder = (0, vscode_1.getWorkspaceFolderPath)();
+    }
+    catch (error) {
+        vscode.window.showErrorMessage("Cloney start failed. Please open a folder first.");
+        return;
+    }
+    // Command directory.
+    const shouldSelectCommandDirectory = await vscode.window.showQuickPick(["OK", "Select Another Directory"], {
+        title: "Directory Selection",
+        placeHolder: `The \"cloney validate\" command will be run in your workspace directory (${(0, path_1.basename)(workspaceFolder)}). Is this OK or would you like to select another directory?`,
+        ignoreFocusOut: true,
+    });
+    if (!shouldSelectCommandDirectory) {
+        return;
+    }
+    let commandDirectory;
+    if (shouldSelectCommandDirectory === "Select Another Directory") {
+        commandDirectory = await vscode.window.showOpenDialog({
+            title: "Validate Directory",
+            defaultUri: vscode.Uri.file(workspaceFolder),
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            openLabel: "Select Validate Directory",
+        });
+        if (!commandDirectory) {
+            return;
+        }
+    }
+    // Run the command.
+    if (!isDocker) {
+        (0, cloney_1.runCloneyValidateCommand)(commandDirectory?.[0].fsPath || workspaceFolder);
+    }
+    else {
+        (0, docker_1.runDockerCloneyValidateCommand)(commandDirectory?.[0].fsPath || workspaceFolder);
     }
 }
 // This method is called when your extension is deactivated

@@ -1,2 +1,0 @@
-TODO: See Docker volume and cloney --variables flag, how it will work.
-TODO: Validate command.

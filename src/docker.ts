@@ -1,4 +1,8 @@
-import { EXTENSION_SETTINGS, CLONEY_DOCKER_IMAGE } from "./constants";
+import {
+  EXTENSION_SETTINGS,
+  CLONEY_DOCKER_IMAGE,
+  CLONEY_VARIABLES_FILE_NAME,
+} from "./constants";
 import { getUserSetting } from "./vscode";
 import {
   CloneyStartCommandOptions,
@@ -65,8 +69,12 @@ export function runDockerCloneyCloneCommand(
   options: CloneyCloneCommandOptions
 ) {
   let command = dockerCommand(
-    `run --rm -it --volume "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`
+    `run --rm -it --volume "${options.workDir}:/home/cloney"`
   );
+  if (options.variables) {
+    command += ` --volume "${options.variables}:/home/cloney/${CLONEY_VARIABLES_FILE_NAME}"`;
+  }
+  command += ` ${CLONEY_DOCKER_IMAGE} cloney clone "${options.repoURL}"`;
   if (options.repoBranch) {
     command += ` --branch "${options.repoBranch}"`;
   }
@@ -74,9 +82,6 @@ export function runDockerCloneyCloneCommand(
     command += ` --tag "${options.repoTag}"`;
   }
   command += ` --output "${options.outputDirName}"`;
-  if (options.variables) {
-    command += ` --variables "${options.variables}"`;
-  }
   createTerminal("Docker Cloney Clone", command);
 }
 
@@ -85,13 +90,22 @@ export function runDockerCloneyDryRunCommand(
   options: CloneyDryRunCommandOptions
 ) {
   let command = dockerCommand(
-    `run --rm -it --volume "${options.workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney dry-run`
+    `run --rm -it --volume "${options.workDir}:/home/cloney"`
   );
   if (options.variables) {
-    command += ` --variables "${options.variables}"`;
+    command += ` --volume "${options.variables}:/home/cloney/${CLONEY_VARIABLES_FILE_NAME}"`;
   }
+  command += ` ${CLONEY_DOCKER_IMAGE} cloney dry-run`;
   if (options.hotReload) {
     command += " --hot-reload";
   }
   createTerminal("Docker Cloney Dry-Run", command);
+}
+
+// Function to run Cloney 'validate' with Docker.
+export function runDockerCloneyValidateCommand(workDir: string) {
+  const command = dockerCommand(
+    `run --rm -it --volume "${workDir}:/home/cloney" ${CLONEY_DOCKER_IMAGE} cloney validate`
+  );
+  createTerminal("Docker Cloney Validate", command);
 }

@@ -70,26 +70,26 @@
       },
       {
         "command": "cloney.docker-dry-run",
-        "title": "Run Cloney Dry-Run Here",
-        "category": "Cloney Docker",
+        "title": "Run Cloney Dry-Run Here with Docker",
+        "category": "(Docker) Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       },
       {
         "command": "cloney.docker-clone",
-        "title": "Clone a Cloney Template Repository Here",
-        "category": "Cloney Docker",
+        "title": "Clone a Cloney Template Repository Here with Docker",
+        "category": "(Docker) Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       },
       {
         "command": "cloney.docker-start",
-        "title": "Start a Cloney Template Repository Here",
-        "category": "Cloney Docker",
+        "title": "Start a Cloney Template Repository Here with Docker",
+        "category": "(Docker) Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       },
       {
         "command": "cloney.docker-validate",
-        "title": "Validate this Cloney Template Repository",
-        "category": "Cloney Docker",
+        "title": "Validate this Cloney Template Repository with Docker",
+        "category": "(Docker) Cloney",
         "icon": "./images/cloney-logo-no-text-rounded.png"
       }
     ],
