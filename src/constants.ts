@@ -1,5 +1,4 @@
 import { tmpdir } from "os";
-import { getUserSetting } from "./vscode";
 
 // Defines the name of the Cloney extension.
 export const EXTENSION_NAME = "cloney";
