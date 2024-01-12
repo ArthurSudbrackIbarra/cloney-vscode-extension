@@ -2,7 +2,7 @@
   "name": "cloney",
   "displayName": "Cloney",
   "description": "Enhanced support for the Cloney tool, making it easier to work with Cloney template repositories directly from within the Visual Studio Code environment.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "icon": "./images/cloney-logo-rounded.png",
   "author": {
     "name": "Arthur Sudbrack Ibarra"
@@ -48,25 +48,57 @@
         "command": "cloney.dry-run",
         "title": "Run Cloney Dry-Run Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.clone",
         "title": "Clone a Cloney Template Repository Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.start",
         "title": "Start a Cloney Template Repository Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.validate",
         "title": "Validate this Cloney Template Repository",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
+      },
+      {
+        "command": "cloney.docker-dry-run",
+        "title": "Run Cloney Dry-Run Here with Docker",
+        "category": "(Docker) Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
+      },
+      {
+        "command": "cloney.docker-clone",
+        "title": "Clone a Cloney Template Repository Here with Docker",
+        "category": "(Docker) Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
+      },
+      {
+        "command": "cloney.docker-start",
+        "title": "Start a Cloney Template Repository Here with Docker",
+        "category": "(Docker) Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
+      },
+      {
+        "command": "cloney.docker-validate",
+        "title": "Validate this Cloney Template Repository with Docker",
+        "category": "(Docker) Cloney",
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
       }
     ],
     "languages": [
@@ -132,6 +164,21 @@
             "type": "boolean",
             "default": true,
             "description": "Whether or not to enable Go Templates suggestions when a Cloney metadata file (.cloney.yaml) is present."
+          }
+        }
+      },
+      {
+        "title": "Cloney Extension (Docker)",
+        "properties": {
+          "cloney.dockerExecutablePath": {
+            "type": "string",
+            "default": "",
+            "description": "(Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within Docker containers."
+          },
+          "cloney.cloneyDockerImageTag": {
+            "type": "string",
+            "default": "",
+            "description": "(Optional) The tag of the Cloney Docker image to use. Only applicable if you want to run Cloney commands from within Docker containers."
           }
         }
       }

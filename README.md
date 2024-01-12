@@ -46,7 +46,7 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 
 ## Requirements
 
-1. To use this extension, you need to have [Cloney](https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney) installed on your machine. If you haven't installed Cloney yet, the extension guides you to the installation page.
+1. To use this extension, you should have [Cloney](https://arthursudbrackibarra.github.io/cloney-documentation/getting-started/#installing-cloney) installed on your machine. If you haven't installed Cloney yet, the extension guides you to the installation page. In case you don't want to install Cloney, the extension offers the option to run Cloney commands from within [Docker](https://www.docker.com/) containers.
 
 1. For the remote variables feature, you also need to have [Git](https://git-scm.com/downloads) installed on your machine.
 
@@ -55,6 +55,7 @@ This extension provides enhanced support for the Cloney tool, making it easier t
 This extension contributes the following settings:
 
 - `cloney.cloneyExecutablePath`: (Optional) The absolute path to the Cloney executable.
+- `cloney.dockerExecutablePath`: (Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within Docker containers.
 - `cloney.enableGoTemplatesSuggestions`: Whether or not to enable Go Templates suggestions when a Cloney metadata file (`.cloney.yaml`) is present.
 
 ## Contributing
