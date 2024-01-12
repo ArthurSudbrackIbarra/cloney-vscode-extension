@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import * as constants from "./constants";
 import {
+  isCloneyInstalled,
   getCloneyVersion,
   isCloneyVersionCompatible,
   runCloneyStartCommand,
@@ -33,7 +34,7 @@ function isCloneySetUp(): boolean {
   if (!cloneyVersion) {
     vscode.window
       .showErrorMessage(
-        "It appears that you do not have Cloney installed. Install it to make full use of this extension.",
+        "It appears that you do not have Cloney installed. Install Cloney or install Docker to make full use of this extension.",
         "Install Cloney",
         "Configure Executable Path",
         "Dismiss"
@@ -217,6 +218,39 @@ export async function activate(context: vscode.ExtensionContext) {
       cloneyValidate(true);
     })
   );
+
+  // Show/Hide Commands.
+  vscode.commands.executeCommand(
+    "setContext",
+    constants.CONTEXT_SETTINGS.showCloneyCommands,
+    true
+  );
+  vscode.commands.executeCommand(
+    "setContext",
+    constants.CONTEXT_SETTINGS.showCloneyDockerCommands,
+    true
+  );
+
+  // If the user does NOT have Docker installed, hide the Docker commands.
+  const dockerInstalled = isDockerInstalled();
+  if (!dockerInstalled) {
+    vscode.commands.executeCommand(
+      "setContext",
+      constants.CONTEXT_SETTINGS.showCloneyDockerCommands,
+      false
+    );
+    return;
+  }
+
+  // If the user has Docker installed and Cloney is NOT installed, hide the Cloney commands.
+  const cloneyInstalled = isCloneyInstalled();
+  if (!cloneyInstalled && dockerInstalled) {
+    vscode.commands.executeCommand(
+      "setContext",
+      constants.CONTEXT_SETTINGS.showCloneyCommands,
+      false
+    );
+  }
 }
 
 // Cloney Start.

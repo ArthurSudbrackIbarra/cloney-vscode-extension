@@ -43,6 +43,11 @@ export function getCloneyVersion(): string | null {
   }
 }
 
+// Function to check if Cloney is installed.
+export function isCloneyInstalled(): boolean {
+  return getCloneyVersion() !== null;
+}
+
 // Function to check if a version of Cloney is compatible with a given major version.
 // For example, if the given version is '1.2.3', and the given major version is '1',
 // this function will return 'true'. If the given version is '2.0.0', this function

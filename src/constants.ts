@@ -49,5 +49,11 @@ export const EXTENSION_SETTINGS = {
   enableGoTemplatesSuggestions: "cloney.enableGoTemplatesSuggestions",
 };
 
+// Defines the names of the Cloney extension context settings.
+export const CONTEXT_SETTINGS = {
+  showCloneyCommands: "cloney.showCloneyCommands",
+  showCloneyDockerCommands: "cloney.showCloneyDockerCommands",
+};
+
 // Defines the compatible major version of Cloney.
 export const COMPATIBLE_CLONEY_MAJOR_VERSION = 1;

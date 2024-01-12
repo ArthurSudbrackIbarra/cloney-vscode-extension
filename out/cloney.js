@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runCloneyValidateCommand = exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.runCloneyStartCommand = exports.isCloneyVersionCompatible = exports.getCloneyVersion = void 0;
+exports.runCloneyValidateCommand = exports.runCloneyDryRunCommand = exports.runCloneyCloneCommand = exports.runCloneyStartCommand = exports.isCloneyVersionCompatible = exports.isCloneyInstalled = exports.getCloneyVersion = void 0;
 const child_process_1 = require("child_process");
 const vscode_1 = require("./vscode");
 const constants_1 = require("./constants");
@@ -45,6 +45,11 @@ function getCloneyVersion() {
     }
 }
 exports.getCloneyVersion = getCloneyVersion;
+// Function to check if Cloney is installed.
+function isCloneyInstalled() {
+    return getCloneyVersion() !== null;
+}
+exports.isCloneyInstalled = isCloneyInstalled;
 // Function to check if a version of Cloney is compatible with a given major version.
 // For example, if the given version is '1.2.3', and the given major version is '1',
 // this function will return 'true'. If the given version is '2.0.0', this function

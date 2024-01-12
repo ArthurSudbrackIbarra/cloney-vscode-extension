@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.COMPATIBLE_CLONEY_MAJOR_VERSION = exports.EXTENSION_SETTINGS = exports.CLONEY_DOCKER_IMAGE = exports.CLONEY_EXTENSION_TEMP_DIR = exports.CLONEY_GITHUB_URL = exports.CLONEY_DOCUMENTATION_URL = exports.INSTALL_CLONEY_URL = exports.GLOBAL_STATE_KEYS = exports.DOCKER_VALIDATE_COMMAND = exports.DOCKER_START_COMMAND = exports.DOCKER_DRY_RUN_COMMAND = exports.DOCKER_CLONE_COMMAND = exports.VALIDATE_COMMAND = exports.START_COMMAND = exports.DRY_RUN_COMMAND = exports.CLONE_COMMAND = exports.OPEN_DOCUMENTATION_COMMAND = exports.CLONEY_VARIABLES_FILE_NAME = exports.CLONEY_METADATA_FILE_NAME = exports.CLONEY_VARIABLES_FILE_LANGUAGE_ID = exports.CLONEY_METADATA_FILE_LANGUAGE_ID = exports.EXTENSION_NAME = void 0;
+exports.COMPATIBLE_CLONEY_MAJOR_VERSION = exports.CONTEXT_SETTINGS = exports.EXTENSION_SETTINGS = exports.CLONEY_DOCKER_IMAGE = exports.CLONEY_EXTENSION_TEMP_DIR = exports.CLONEY_GITHUB_URL = exports.CLONEY_DOCUMENTATION_URL = exports.INSTALL_CLONEY_URL = exports.GLOBAL_STATE_KEYS = exports.DOCKER_VALIDATE_COMMAND = exports.DOCKER_START_COMMAND = exports.DOCKER_DRY_RUN_COMMAND = exports.DOCKER_CLONE_COMMAND = exports.VALIDATE_COMMAND = exports.START_COMMAND = exports.DRY_RUN_COMMAND = exports.CLONE_COMMAND = exports.OPEN_DOCUMENTATION_COMMAND = exports.CLONEY_VARIABLES_FILE_NAME = exports.CLONEY_METADATA_FILE_NAME = exports.CLONEY_VARIABLES_FILE_LANGUAGE_ID = exports.CLONEY_METADATA_FILE_LANGUAGE_ID = exports.EXTENSION_NAME = void 0;
 const os_1 = require("os");
 // Defines the name of the Cloney extension.
 exports.EXTENSION_NAME = "cloney";
@@ -38,6 +38,11 @@ exports.EXTENSION_SETTINGS = {
     cloneyExecutablePath: "cloney.cloneyExecutablePath",
     dockerExecutablePath: "cloney.dockerExecutablePath",
     enableGoTemplatesSuggestions: "cloney.enableGoTemplatesSuggestions",
+};
+// Defines the names of the Cloney extension context settings.
+exports.CONTEXT_SETTINGS = {
+    showCloneyCommands: "cloney.showCloneyCommands",
+    showCloneyDockerCommands: "cloney.showCloneyDockerCommands",
 };
 // Defines the compatible major version of Cloney.
 exports.COMPATIBLE_CLONEY_MAJOR_VERSION = 1;

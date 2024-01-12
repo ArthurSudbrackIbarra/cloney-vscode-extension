@@ -48,49 +48,57 @@
         "command": "cloney.dry-run",
         "title": "Run Cloney Dry-Run Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.clone",
         "title": "Clone a Cloney Template Repository Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.start",
         "title": "Start a Cloney Template Repository Here",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.validate",
         "title": "Validate this Cloney Template Repository",
         "category": "Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyCommands"
       },
       {
         "command": "cloney.docker-dry-run",
         "title": "Run Cloney Dry-Run Here with Docker",
         "category": "(Docker) Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
       },
       {
         "command": "cloney.docker-clone",
         "title": "Clone a Cloney Template Repository Here with Docker",
         "category": "(Docker) Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
       },
       {
         "command": "cloney.docker-start",
         "title": "Start a Cloney Template Repository Here with Docker",
         "category": "(Docker) Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
       },
       {
         "command": "cloney.docker-validate",
         "title": "Validate this Cloney Template Repository with Docker",
         "category": "(Docker) Cloney",
-        "icon": "./images/cloney-logo-no-text-rounded.png"
+        "icon": "./images/cloney-logo-no-text-rounded.png",
+        "enablement": "cloney.showCloneyDockerCommands"
       }
     ],
     "languages": [
@@ -155,7 +163,7 @@
           "cloney.dockerExecutablePath": {
             "type": "string",
             "default": "",
-            "description": "(Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within a Docker container."
+            "description": "(Optional) The absolute path to the Docker executable. Only applicable if you want to run Cloney commands from within Docker containers."
           },
           "cloney.enableGoTemplatesSuggestions": {
             "type": "boolean",
